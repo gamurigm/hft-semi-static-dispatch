@@ -63,11 +63,7 @@ To prove the microarchitectural advantages of `FastBranch`, we executed a benchm
 │   └── montecarlo_analysis.cpp     <-- Monte Carlo benchmarking suite
 ├── tests/
 │   ├── bootstrap_validator.cpp     <-- Non-parametric Bootstrap resampling validator
-│   └── test_semi_static.cpp        <-- Unit tests for all dispatch strategies
-├── examples/
-│   ├── final_experiment.cpp        <-- Main benchmark experiment entry point
-│   ├── semi_static_hft.cpp         <-- Basic HFT routing demo
-│   └── semi_static_mt.cpp          <-- Multi-threaded cache contention test
+│   └── test_semi_static.cpp        <-- Unit tests and HFT benchmark suite
 ├── img/
 │   ├── pipeline_flush_diagram.png  <-- Embedded CPU pipeline PNG diagram
 │   └── cache_isolation_diagram.png <-- Embedded Cache isolation PNG diagram
@@ -81,10 +77,10 @@ To prove the microarchitectural advantages of `FastBranch`, we executed a benchm
 
 This library is designed for header-only integration. To compile and run the benchmark suite locally, use a C++17 compliant compiler (such as GCC 13+ or MinGW-w64).
 
-### 1. Compile the Main Experiment:
+### 1. Compile the Main Test Benchmark:
 ```bash
-g++ -std=c++17 -O3 -march=native examples/final_experiment.cpp -o hft_demo
-./hft_demo
+g++ -std=c++17 -O3 -march=native tests/test_semi_static.cpp -o test_ss
+./test_ss
 ```
 
 ### 2. Compile and Run the Bootstrap Resampling Validation:

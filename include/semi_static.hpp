@@ -12,7 +12,7 @@
  * Ambas variantes disponibles en version single-thread y atomic (multi-thread).
  *
  * @version 3.0.0
- * @date 2025
+ * @date 2026
  * @copyright MIT License
  *
  * Requisitos: C++17 o superior.

@@ -58,9 +58,8 @@ references/
 !README.md
 
 # 5. Código No Relevante / Demos Viejos
-# Solo se rastrea el src/, include/, tests/ y examples/ core.
-examples/branch_changer.hpp
-examples/*_demo*.cpp
+# Solo se rastrea el src/, include/, tests/ core.
+examples/
 hft_demo
 
 # FIN DEL GITIGNORE

@@ -15,7 +15,7 @@
  *    - Mismo API: set_direction() / branch() / operator()
  *
  *  Compilar:
- *    g++ -std=c++17 -O2 -o final_demo.exe examples/final_experiment.cpp
+ *    g++ -std=c++17 -O3 -o final_demo.exe examples/final_experiment.cpp
  *    .\final_demo.exe
  * ============================================================
  */

@@ -12,7 +12,7 @@
  *    - Histograma ASCII de la distribucion de tiempos
  *
  *  Compilar:
- *    g++ -std=c++17 -O2 -o montecarlo.exe montecarlo_analysis.cpp
+ *    g++ -std=c++17 -O3 -o montecarlo.exe montecarlo_analysis.cpp
  *    .\montecarlo.exe
  * ============================================================
  */

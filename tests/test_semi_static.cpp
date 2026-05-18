@@ -14,7 +14,7 @@
  *    - Benchmark comparativo final
  *
  *  Compilar:
- *    g++ -std=c++17 -O2 -o test_ss.exe test_semi_static.cpp
+ *    g++ -std=c++17 -O3 -o test_ss.exe test_semi_static.cpp
  *    .\test_ss.exe
  * ============================================================
  */

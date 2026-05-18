@@ -7,11 +7,11 @@
  *  equivalente a un switch de N casos.
  *
  *  Compilar en Windows (PowerShell):
- *    g++ -std=c++17 -O2 -o hft_demo.exe examples/semi_static_hft.cpp
+ *    g++ -std=c++17 -O3 -o hft_demo.exe examples/semi_static_hft.cpp
  *    .\hft_demo.exe
  *
  *  Compilar en Linux:
- *    g++ -std=c++17 -O2 -o hft_demo examples/semi_static_hft.cpp
+ *    g++ -std=c++17 -O3 -o hft_demo examples/semi_static_hft.cpp
  *    ./hft_demo
  * ============================================================
  */

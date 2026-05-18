@@ -8,7 +8,7 @@
  *    - N hilos hot path: procesan ordenes, llaman branch() sin locks
  *
  *  Compilar:
- *    g++ -std=c++17 -O2 -o hft_mt.exe examples/semi_static_mt.cpp
+ *    g++ -std=c++17 -O3 -o hft_mt.exe examples/semi_static_mt.cpp
  *    .\hft_mt.exe
  * ============================================================
  */

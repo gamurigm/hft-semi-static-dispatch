@@ -26,9 +26,9 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \begin{axis}[
     xbar,
     bar shift=0pt,
-    width=0.85\linewidth, % Narrower width for robust column alignment
-    height=5.2cm,
-    bar width=15pt,
+    width=0.82\linewidth, % Narrower width for robust column alignment
+    height=4.4cm,        % Compact height to fit perfectly in 3 pages
+    bar width=12pt,
     ymin=0.5, ymax=4.5,
     xlabel={\textbf{Latencia media (ns/op)}},
     ytick={1,2,3,4},
@@ -79,9 +79,9 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \begin{axis}[
     ybar,
     bar shift=0pt,
-    width=0.85\linewidth, % Narrower width for robust column alignment
-    height=6.0cm,
-    bar width=30pt,
+    width=0.82\linewidth, % Narrower width for robust column alignment
+    height=4.8cm,        % Compact height to fit perfectly in 3 pages
+    bar width=24pt,
     xmin=0.5, xmax=3.5,
     ylabel={\textbf{Speedup ($\times$)}},
     xtick={1,2,3},
@@ -110,7 +110,7 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \draw[dashed, thick, techblue!60] (axis cs:0.5,1.68) -- (axis cs:3.5,1.68)
     node[pos=0.05, above, font=\scriptsize\itshape, text=techblue] {Límite Ideal: $1.68\times$};
 
-\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,1.95) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
+\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,1.88) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
 
 \end{axis}
 \end{tikzpicture}

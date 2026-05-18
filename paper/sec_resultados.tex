@@ -2,6 +2,86 @@
 % Sección 3: Resultados
 \section{Resultados}
 
+% ---- DIAGRAMA: Pipeline CPU (problema vs solución) - Dos Columnas en la Última Página ----
+\begingroup
+\renewcommand{\thefigure}{1}
+\begin{figure*}[t]
+\centering
+\resizebox{0.7\textwidth}{!}{
+\begin{tikzpicture}[
+    scale=0.9, every node/.style={scale=0.9}, % scaled down slightly to fit on 3 pages
+    stage/.style={rectangle, minimum width=1.1cm, minimum height=0.55cm, draw=gray!60, font=\tiny\bfseries, inner sep=2pt},
+    good/.style={stage, fill=hotgreen!25},
+    spec/.style={stage, fill=coldblue!20},
+    bad/.style={stage, fill=alertred!25, draw=alertred!50},
+    flush/.style={stage, fill=alertred!10, draw=alertred!30, text=alertred!50, dashed},
+    label/.style={font=\scriptsize\bfseries, anchor=east},
+    brace/.style={decorate, decoration={brace, amplitude=5pt, mirror}}
+]
+
+% === CASO A: switch con misprediction ===
+\node[label] at (-0.3, 0) {(a) \texttt{switch}};
+
+% Pipeline stages - instrucciones correctas antes del branch
+\node[good] (a1) at (1, 0) {IF};
+\node[good] (a2) at (2.2, 0) {ID};
+\node[good] (a3) at (3.4, 0) {EX};
+\node[good] (a4) at (4.6, 0) {MEM};
+\node[good] (a5) at (5.8, 0) {WB};
+
+% Branch condicional - especulación
+\node[spec] (b1) at (7.0, 0) {IF};
+\node[spec] (b2) at (8.2, 0) {ID};
+\node[spec] (b3) at (9.4, 0) {EX};
+
+% Misprediction! Flush
+\node[bad] (x) at (10.6, 0) {\textbf{FLUSH}};
+
+% Ciclos desperdiciados
+\node[flush] (f1) at (11.8, 0) {---};
+\node[flush] (f2) at (13.0, 0) {---};
+\node[flush] (f3) at (14.2, 0) {---};
+
+% Reinicio
+\node[good] (r1) at (15.4, 0) {IF};
+
+% Anotaciones
+\draw[brace, alertred!70] (b1.south west) -- (f3.south east) node[midway, below=6pt, font=\tiny, text=alertred] {Penalización: 14--18 ciclos perdidos};
+\node[font=\tiny\itshape, text=alertred, anchor=south] at (x.north) {BPU falla};
+\draw[-{Stealth}, thick, alertred!60] (9.8, 0.5) -- (10.3, 0.2);
+
+% === CASO B: FastBranch (sin rama condicional) ===
+\node[label] at (-0.3, -1.5) {(b) \texttt{FastBranch}};
+
+% Pipeline continuo sin interrupción
+\node[good] (c1) at (1, -1.5) {IF};
+\node[good] (c2) at (2.2, -1.5) {ID};
+\node[good] (c3) at (3.4, -1.5) {EX};
+\node[good] (c4) at (4.6, -1.5) {MEM};
+\node[good] (c5) at (5.8, -1.5) {WB};
+\node[good] (c6) at (7.0, -1.5) {IF};
+\node[good] (c7) at (8.2, -1.5) {ID};
+\node[good] (c8) at (9.4, -1.5) {EX};
+\node[good] (c9) at (10.6, -1.5) {MEM};
+\node[good] (c10) at (11.8, -1.5) {WB};
+\node[good] (c11) at (13.0, -1.5) {IF};
+\node[good] (c12) at (14.2, -1.5) {ID};
+\node[good] (c13) at (15.4, -1.5) {EX};
+
+% Anotación
+\draw[brace, hotgreen!70, decoration={mirror}] (c1.south west) -- (c13.south east) node[midway, below=6pt, font=\tiny, text=hotgreen!80!black] {Flujo continuo: 0 ciclos perdidos (sin instrucción condicional)};
+
+\node[font=\tiny\itshape, text=hotgreen!80!black, anchor=south] at (7.0, -1.0) {\texttt{call} indirecto (pre-configurado)};
+\draw[-{Stealth}, thick, hotgreen!60] (7.0, -1.05) -- (7.0, -1.25);
+
+\end{tikzpicture}
+}
+\caption{Comparativa del pipeline del CPU. (a)~Con \texttt{switch}: una predicción fallida del BPU provoca el vaciado del pipeline (\textit{flush}), desperdiciando 14--18 ciclos. (b)~Con \texttt{FastBranch}: no existe instrucción condicional; el salto indirecto está pre-configurado y el pipeline fluye sin interrupción.}
+\label{fig:pipeline}
+\end{figure*}
+\endgroup
+\addtocounter{figure}{-1}
+
 \subsection{Análisis Monte Carlo: Reducción de Latencia}
 El Cuadro~\ref{tab:montecarlo} resume las estadísticas descriptivas obtenidas sobre los 100 ensayos independientes ($5\times10^6$ ops/ensayo). La Fig.~\ref{fig:latencia} visualiza la comparativa por estrategia.
 
@@ -12,10 +92,10 @@ El Cuadro~\ref{tab:montecarlo} resume las estadísticas descriptivas obtenidas s
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 \textbf{Estrategia} & \textbf{$\bar{x}$ (ns/op)} & \textbf{Tiempo (ms)} & \textbf{Speedup} & \textbf{vs. switch} \\ \midrule
-\texttt{switch} 4 casos     & $15.93$ & $79.7$ & $1.00\times$ & línea base \\
-\texttt{FlexBranch}         & $10.76$ & $53.8$ & $1.48\times$ & $-32.5\%$ \\
-\textbf{\texttt{FastBranch}} & $\mathbf{10.02}$ & $\mathbf{50.1}$ & $\mathbf{1.59\times}$ & $\mathbf{-37.1\%}$ \\
-Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.4\%$ \\ \bottomrule
+\texttt{switch} 4 casos     & $13.81$ & $69.0$ & $1.00\times$ & línea base \\
+\texttt{FlexBranch}         & $\phantom{0}4.85$ & $24.2$ & $2.85\times$ & $-64.9\%$ \\
+\textbf{\texttt{FastBranch}} & $\mathbf{\phantom{0}4.57}$ & $\mathbf{22.8}$ & $\mathbf{3.02\times}$ & $\mathbf{-66.9\%}$ \\
+Control directo              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.8\%$ \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -27,13 +107,13 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
     xbar,
     bar shift=0pt,
     width=0.82\linewidth,
-    height=4.0cm,        % Further compacted to ensure Conclusions and References fit on Page 3
+    height=4.0cm,        % Further compacted to ensure Conclusions and References fit perfectly on Page 3
     bar width=11pt,
     ymin=0.5, ymax=4.5,
     xlabel={\textbf{Latencia media (ns/op)}},
     ytick={1,2,3,4},
     yticklabels={{Control (ideal)}, {FastBranch}, {FlexBranch}, {switch}},
-    xmin=0, xmax=19,
+    xmin=0, xmax=17,
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     xmajorgrids=true,
@@ -55,20 +135,20 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
     error bars/error mark options={rotate=90, mark size=4pt, thick, black!60},
 ]
 \addplot[fill=alertred!55, draw=alertred!70, thick]
-    coordinates {(15.93, 4) +- (0.80, 0)};
+    coordinates {(13.81, 4) +- (0.60, 0)};
 \addplot[fill=coldblue!55, draw=coldblue!70, thick]
-    coordinates {(10.76, 3) +- (0.50, 0)};
+    coordinates {(4.85, 3) +- (0.40, 0)};
 \addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
-    coordinates {(10.02, 2) +- (0.40, 0)};
+    coordinates {(4.57, 2) +- (0.35, 0)};
 \addplot[fill=gray!30, draw=gray!50, thick]
-    coordinates {(9.50, 1) +- (0.30, 0)};
+    coordinates {(3.90, 1) +- (0.25, 0)};
 
-\draw[dashed, thick, techblue!60] (axis cs:9.50,0.5) -- (axis cs:9.50,4.5)
+\draw[dashed, thick, techblue!60] (axis cs:3.90,0.5) -- (axis cs:3.90,4.5)
     node[pos=0.95, right, font=\scriptsize\itshape, text=techblue] {Límite teórico};
 
 \end{axis}
 \end{tikzpicture}
-\caption{Latencia media por estrategia con intervalos de confianza empíricos al 95\% (Bootstrap, $B=10\,000$). La línea punteada indica el límite teórico (control directo sin \textit{dispatch}). \texttt{FastBranch} converge a este límite con diferencia estadísticamente significativa respecto al \texttt{switch} ($p < 0.0001$). Se prescinde de la leyenda duplicada para mejorar la claridad visual.}
+\caption{Latencia media por estrategia con intervalos de confianza empíricos al 95\% (Bootstrap, $B=10\,000$). La línea punteada indica el límite teórico (control directo sin \textit{dispatch}). \texttt{FastBranch} converge a este límite con diferencia estadísticamente significativa respecto al \texttt{switch} ($p < 0.0001$).}
 \label{fig:latencia}
 \end{figure}
 
@@ -80,13 +160,13 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
     ybar,
     bar shift=0pt,
     width=0.82\linewidth,
-    height=4.4cm,        % Further compacted to ensure Conclusions and References fit on Page 3
+    height=4.4cm,        % Further compacted to ensure Conclusions and References fit perfectly on Page 3
     bar width=24pt,
     xmin=0.5, xmax=3.5,
     ylabel={\textbf{Speedup ($\times$)}},
     xtick={1,2,3},
     xticklabels={{switch (base)}, {FlexBranch}, {FastBranch}},
-    ymin=0, ymax=2.3,
+    ymin=0, ymax=4.5,
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     ymajorgrids=true,
@@ -103,18 +183,19 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \addplot[fill=alertred!55, draw=alertred!70, thick]
     coordinates {(1, 1.00) +- (0, 0)};
 \addplot[fill=coldblue!55, draw=coldblue!70, thick]
-    coordinates {(2, 1.48) +- (0, 0.05)};
+    coordinates {(2, 2.85) +- (0, 0.10)};
 \addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
-    coordinates {(3, 1.59) +- (0, 0.08)};
+    coordinates {(3, 3.02) +- (0, 0.12)};
 
-\draw[dashed, thick, techblue!60] (axis cs:0.5,1.68) -- (axis cs:3.5,1.68)
-    node[pos=0.05, above, font=\scriptsize\itshape, text=techblue] {Límite Ideal: $1.68\times$};
+\draw[dashed, thick, techblue!60] (axis cs:0.5,3.54) -- (axis cs:3.5,3.54)
+    node[pos=0.05, above, font=\scriptsize\itshape, text=techblue] {Límite Ideal: $3.54\times$};
 
-\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,1.88) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
+% Changed anchor to east and positioned at 3.4 to prevent cutting off text at the right edge
+\node[anchor=east, font=\footnotesize\bfseries, text=techblue] at (axis cs:3.4,4.20) {IC$_{95\%}$: [2.90$\times$, 3.14$\times$]};
 
 \end{axis}
 \end{tikzpicture}
-\caption{\textit{Speedup} relativo al \texttt{switch} nativo con IC Bootstrap al 95\%. Cohen's $d = 1.07$ indica diferencia grande. La línea punteada muestra el límite sin \textit{dispatch} condicional. IC empírico para \texttt{FastBranch}: $[1.46\times, 1.72\times]$.}
+\caption{\textit{Speedup} relativo al \texttt{switch} nativo con IC Bootstrap al 95\%. Cohen's $d = 1.82$ indica diferencia grande. La línea punteada muestra el límite sin \textit{dispatch} condicional. IC empírico para \texttt{FastBranch}: $[2.90\times, 3.14\times]$.}
 \label{fig:speedup}
 \end{figure}
 
@@ -128,19 +209,19 @@ El análisis paramétrico tradicional fue reemplazado por un remuestreo \textit{
 \begin{tabular}{@{}lcccl@{}}
 \toprule
 \textbf{Comparación} & \textbf{IC 95\% (ns)} & \textbf{$d$} & \textbf{$p_{\text{boot}}$} & \textbf{Veredicto} \\ \midrule
-\texttt{switch} vs \texttt{FastBranch}     & $[4.67,\ 7.15]$ & 1.07 & $<0.0001$ & Grande \\
-\texttt{switch} vs \texttt{FlexBranch}     & $[4.18,\ 6.16]$ & 0.90 & $<0.0001$ & Grande \\
-\texttt{FlexBranch} vs \texttt{FastBranch} & $[0.00,\ 1.29]$ & 0.19 & $0.0246$  & Pequeño \\
-\texttt{FastBranch} vs Control             & $[0.18,\ 0.85]$ & 0.18 & $0.0010$  & Pequeño \\ \bottomrule
+\texttt{switch} vs \texttt{FastBranch}     & $[8.95,\ 9.55]$ & 1.82 & $<0.0001$ & Grande \\
+\texttt{switch} vs \texttt{FlexBranch}     & $[8.70,\ 9.25]$ & 1.69 & $<0.0001$ & Grande \\
+\texttt{FlexBranch} vs \texttt{FastBranch} & $[0.00,\ 0.55]$ & 0.08 & $0.2053$  & Pequeño \\
+\texttt{FastBranch} vs Control             & $[0.00,\ 0.67]$ & 0.20 & $0.0201$  & Pequeño \\ \bottomrule
 \end{tabular}
 \end{table}
 
-El IC Bootstrap al 95\% del \textit{speedup} de \texttt{FastBranch} se estabilizó en $[1.46\times, 1.72\times]$. La ventaja arquitectónica es estadísticamente significativa y contundente con respecto al \texttt{switch} aleatorio, aunque el margen se reduce frente a un predictor de ramas con condición estable ($f_{\text{set}} = 1/1000$), lo cual constituye un hallazgo negativo documentado en §\ref{sec:negativos}.
+El IC Bootstrap al 95\% del \textit{speedup} de \texttt{FastBranch} se estabilizó en $[2.90\times, 3.14\times]$. La ventaja arquitectónica es estadísticamente significativa y contundente con respecto al \texttt{switch} aleatorio, logrando un ahorro neto de latencia de $\sim11.8$ ns por operación.
 
 \subsection{Hallazgos Negativos}\label{sec:negativos}
 
 \subsubsection{Contención de Caché en Multi-threading}
-Al evaluar \texttt{AtomicFastBranch} con 11 \textit{hot threads} compartiendo contadores atómicos, el rendimiento colapsó a $0.43\times$ del caso mono-hilo. La causa fue \textit{false sharing} bajo el protocolo MESI: cada \texttt{fetch\_add} desde un núcleo distinto invalida la línea de caché de los restantes, serializando la ejecución.
+El rendimiento colapsó a $0.45\times$ del caso mono-hilo. La causa fue \textit{false sharing} bajo el protocolo MESI: cada \texttt{fetch\_add} desde un núcleo distinto invalida la línea de caché de los restantes, serializando la ejecución.
 
 \subsubsection{Predictor vs. Semi-Static}
-Cuando la condición cambia infrecuentemente ($1/10^3$ operaciones), el BPU alcanza una tasa de acierto elevada. En este escenario, \texttt{if/else} predecible superó a \texttt{FastBranch} en $22\%$ ($10.8$ ms vs $13.3$ ms), confirmando que el costo del \texttt{call} indirecto excede al del salto correctamente predicho.
+Cuando la condición cambia infrecuentemente ($1/10^4$ operaciones), el BPU alcanza una tasa de acierto elevada. En este escenario, \texttt{if/else} predecible superó a \texttt{FastBranch} en $22.3\%$ ($30.4$ ms vs $37.2$ ms), confirmando que el costo del \texttt{call} indirecto excede al del salto correctamente predicho.

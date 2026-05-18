@@ -19,79 +19,8 @@ Las diferencias se validaron mediante un análisis estadístico no paramétrico 
 
 La Fig.~\ref{fig:pipeline} ilustra el mecanismo por el cual una predicción fallida destruye el rendimiento del pipeline superescalar. Cuando el BPU falla, todas las instrucciones ejecutadas especulativamente se descartan, generando una burbuja de 14--18 ciclos.
 
-% ---- DIAGRAMA: Pipeline CPU (problema vs solución) ----
-\begin{figure*}[ht]
-\centering
-\begin{tikzpicture}[
-    scale=0.9, every node/.style={scale=0.9}, % scaled down slightly to fit on 3 pages
-    stage/.style={rectangle, minimum width=1.1cm, minimum height=0.55cm, draw=gray!60, font=\tiny\bfseries, inner sep=2pt},
-    good/.style={stage, fill=hotgreen!25},
-    spec/.style={stage, fill=coldblue!20},
-    bad/.style={stage, fill=alertred!25, draw=alertred!50},
-    flush/.style={stage, fill=alertred!10, draw=alertred!30, text=alertred!50, dashed},
-    label/.style={font=\scriptsize\bfseries, anchor=east},
-    brace/.style={decorate, decoration={brace, amplitude=5pt, mirror}}
-]
 
-% === CASO A: switch con misprediction ===
-\node[label] at (-0.3, 0) {(a) \texttt{switch}};
-
-% Pipeline stages - instrucciones correctas antes del branch
-\node[good] (a1) at (1, 0) {IF};
-\node[good] (a2) at (2.2, 0) {ID};
-\node[good] (a3) at (3.4, 0) {EX};
-\node[good] (a4) at (4.6, 0) {MEM};
-\node[good] (a5) at (5.8, 0) {WB};
-
-% Branch condicional - especulación
-\node[spec] (b1) at (7.0, 0) {IF};
-\node[spec] (b2) at (8.2, 0) {ID};
-\node[spec] (b3) at (9.4, 0) {EX};
-
-% Misprediction! Flush
-\node[bad] (x) at (10.6, 0) {\textbf{FLUSH}};
-
-% Ciclos desperdiciados
-\node[flush] (f1) at (11.8, 0) {---};
-\node[flush] (f2) at (13.0, 0) {---};
-\node[flush] (f3) at (14.2, 0) {---};
-
-% Reinicio
-\node[good] (r1) at (15.4, 0) {IF};
-
-% Anotaciones
-\draw[brace, alertred!70] (b1.south west) -- (f3.south east) node[midway, below=6pt, font=\tiny, text=alertred] {Penalización: 14--18 ciclos perdidos};
-\node[font=\tiny\itshape, text=alertred, anchor=south] at (x.north) {BPU falla};
-\draw[-{Stealth}, thick, alertred!60] (9.8, 0.5) -- (10.3, 0.2);
-
-% === CASO B: FastBranch (sin rama condicional) ===
-\node[label] at (-0.3, -1.5) {(b) \texttt{FastBranch}};
-
-% Pipeline continuo sin interrupción
-\node[good] (c1) at (1, -1.5) {IF};
-\node[good] (c2) at (2.2, -1.5) {ID};
-\node[good] (c3) at (3.4, -1.5) {EX};
-\node[good] (c4) at (4.6, -1.5) {MEM};
-\node[good] (c5) at (5.8, -1.5) {WB};
-\node[good] (c6) at (7.0, -1.5) {IF};
-\node[good] (c7) at (8.2, -1.5) {ID};
-\node[good] (c8) at (9.4, -1.5) {EX};
-\node[good] (c9) at (10.6, -1.5) {MEM};
-\node[good] (c10) at (11.8, -1.5) {WB};
-\node[good] (c11) at (13.0, -1.5) {IF};
-\node[good] (c12) at (14.2, -1.5) {ID};
-\node[good] (c13) at (15.4, -1.5) {EX};
-
-% Anotación
-\draw[brace, hotgreen!70, decoration={mirror}] (c1.south west) -- (c13.south east) node[midway, below=6pt, font=\tiny, text=hotgreen!80!black] {Flujo continuo: 0 ciclos perdidos (sin instrucción condicional)};
-
-\node[font=\tiny\itshape, text=hotgreen!80!black, anchor=south] at (7.0, -1.0) {\texttt{call} indirecto (pre-configurado)};
-\draw[-{Stealth}, thick, hotgreen!60] (7.0, -1.05) -- (7.0, -1.25);
-
-\end{tikzpicture}
-\caption{Comparativa del pipeline del CPU. (a)~Con \texttt{switch}: una predicción fallida del BPU provoca el vaciado del pipeline (\textit{flush}), desperdiciando 14--18 ciclos. (b)~Con \texttt{FastBranch}: no existe instrucción condicional; el salto indirecto está pre-configurado y el pipeline fluye sin interrupción.}
-\label{fig:pipeline}
-\end{figure*}
+% El diagrama de pipeline (Fig 1) ha sido trasladado a la discusión para ubicarse en la última página ocupando dos columnas.
 
 \subsection{Implementación y Arquitectura}
 Se desarrolló la biblioteca \texttt{semi\_static.hpp} (\textit{header-only}, C++17) con cuatro variantes (Cuadro~\ref{tab:clases}). La arquitectura central se basa en el desacoplamiento físico entre la evaluación de la condición (\textit{cold path}) y la ejecución del \textit{dispatch} (\textit{hot path}), como se ilustra en la Fig.~\ref{fig:arquitectura}.
@@ -110,6 +39,7 @@ Se desarrolló la biblioteca \texttt{semi\_static.hpp} (\textit{header-only}, C+
 \end{tabular}
 \end{table}
 
+\setcounter{figure}{1}
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
@@ -151,4 +81,4 @@ Se desarrolló la biblioteca \texttt{semi\_static.hpp} (\textit{header-only}, C+
 \end{figure}
 
 \subsection{Entorno de Ejecución}
-Las pruebas se ejecutaron en Windows~11, procesador Intel de 12 núcleos lógicos, compilador GCC~11.2 (MinGW-w64, C++17, \texttt{-O2}). La instrumentación temporal se realizó con \texttt{std::chrono::high\_resolution\_clock}. Las condiciones aleatorias se pre-generaron antes de cada \textit{trial} para excluir el costo del RNG.
+Las pruebas se ejecutaron en un entorno Linux (Ubuntu 24.04 LTS), procesador Intel con 12 núcleos lógicos, compilador GCC~13.3 (\texttt{-O2}, C++17). La instrumentación temporal se realizó mediante \texttt{std::chrono::high\_resolution\_clock}. Las condiciones aleatorias se pre-generaron antes de cada \textit{trial} para asegurar que el costo del generador de números aleatorios (RNG) no contaminara las mediciones de latencia del \textit{hot path}.

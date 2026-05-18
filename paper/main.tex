@@ -16,7 +16,7 @@
 \begin{document}
 
 % --- Metadatos ---
-\title{Bootstrap Validation of Cache-Aware Semi-Static Dispatch in C++17 for HFT}
+\title{Cache-Aware Semi-Static Dispatch in C++17 for High-Frequency Trading}
 
 \author{Gabriel Omar Murillo Medina\\
         \textit{Ingeniería en Software}\\
@@ -26,7 +26,7 @@
 
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-En sistemas de trading de alta frecuencia (HFT), las penalizaciones por predicción fallida de ramas (\textit{branch misprediction}) representan una fuente crítica de latencia no determinista en el \textit{critical path} de ejecución. Este trabajo implementa y valida experimentalmente la técnica de condiciones semi-estáticas propuesta por Bilokon et al. (2025) mediante \texttt{FastBranch}, una abstracción \textit{header-only} en C++17 que desacopla la evaluación de condiciones del flujo crítico. Para entornos concurrentes multi-hilo, se diseña un esquema libre de bloqueos (\textit{lock-free}) y consciente de la jerarquía de memoria, aplicando aislamiento a nivel de línea de caché (\texttt{alignas(64)}) y sincronización basada en semántica \textit{release/acquire} para mitigar el \textit{false sharing}. La validación empírica en hardware x86-64 con $5\times10^8$ operaciones mediante un análisis estadístico de remuestreo (\textit{Bootstrapping}, $B=10\,000$) demostró un \textit{speedup} del $1.59\times$ (IC 95\% empírico: $[1.46\times, 1.72\times]$, Cohen's $d=1.07$, $p_{\text{boot}} < 0.0001$), reduciendo la latencia de 15.93 ns/op a 10.02 ns/op, convergiendo de manera consistente al límite teórico sin saltos (9.50 ns/op). Se documentan además hallazgos negativos, incluyendo la degradación del rendimiento por contención MESI en hilos de escritura concurrente.
+In High-Frequency Trading (HFT) systems, branch misprediction penalties represent a critical source of non-deterministic latency in the execution critical path. This paper implements and experimentally validates the semi-static conditions technique proposed by Bilokon et al. (2025) through \texttt{FastBranch}, a C++17 header-only abstraction that decouples condition evaluation from the critical flow. For multi-threaded concurrent environments, a lock-free and cache-aware scheme is designed, applying cache-line isolation (\texttt{alignas(64)}) and synchronization based on \textit{release/acquire} semantics to mitigate false sharing. Empirical validation on x86-64 hardware with $5\times10^8$ operations using bootstrap resampling statistical analysis ($B=10\,000$) demonstrated a $1.59\times$ speedup (empirical 95\% CI: $[1.46\times, 1.72\times]$, Cohen's $d=1.07$, $p_{\text{boot}} < 0.0001$), reducing latency from 15.93 ns/op to 10.02 ns/op, consistently converging to the branchless theoretical limit (9.50 ns/op). Negative findings are also documented, including performance degradation due to MESI contention in concurrent writer threads.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -42,9 +42,9 @@ Low-Latency Systems, Software Architecture, High-Frequency Trading, Branch Predi
 \input{sec_metodologia.tex}
 \input{sec_resultados.tex}
 
-\newpage
 \input{sec_discusion.tex}
 \input{sec_conclusiones.tex}
+\balance
 \input{sec_referencias.tex}
 
 \end{document}

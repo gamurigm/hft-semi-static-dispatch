@@ -14,6 +14,14 @@
 bin/
 build/
 obj/
+bootstrap_final
+bootstrap_validator
+bootstrap_validator_o2
+final_demo
+hft_mt
+montecarlo
+montecarlo_final
+montecarlo_o2
 
 # 2. Entornos de Desarrollo e IDEs
 .vscode/
@@ -37,6 +45,8 @@ paper/*.fdb_latexmk
 paper/*.synctex.gz
 paper/*.bbl
 paper/*.blg
+texput.log
+last_run_results.txt
 
 # 4. Documentación No Relevante (Legacy, Markdown, PDFs de Referencia)
 # El usuario solicitó ignorar toda la documentación EXCEPTO el LaTeX final

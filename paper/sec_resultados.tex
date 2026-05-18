@@ -1,0 +1,145 @@
+% sec_resultados.tex
+% Sección 3: Resultados
+\section{Resultados}
+
+\subsection{Análisis Monte Carlo: Reducción de Latencia}
+El Cuadro~\ref{tab:montecarlo} resume las estadísticas descriptivas obtenidas sobre los 100 ensayos independientes. La Fig.~\ref{fig:latencia} visualiza la comparativa.
+
+\begin{table}[ht]
+\centering
+\caption{Estadísticas descriptivas de latencia ($K=100$, $N=5\times10^6$)}
+\label{tab:montecarlo}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Estrategia} & \textbf{$\bar{x}$ (ns/op)} & \textbf{$\sigma$ (ns)} & \textbf{IC 95\%} & \textbf{Speedup} \\ \midrule
+\texttt{switch}         & $13.45$ & $2.58$ & $[12.92, 13.97]$ & $1.00\times$ \\
+\texttt{FlexBranch}     & $5.28$  & $1.90$ & $[4.89, 5.67]$   & $2.55\times$ \\
+\textbf{\texttt{FastBranch}} & $\mathbf{4.39}$ & $\mathbf{0.87}$ & $\mathbf{[4.21, 4.57]}$ & $\mathbf{3.11\times}$ \\
+Control directo         & $4.10$  & $1.01$ & $[3.89, 4.31]$   & $3.28\times$ \\ \bottomrule
+\end{tabular}
+\end{table}
+
+% ---- GRÁFICO 1: Barras horizontales con IC 95% ----
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    xbar,
+    bar shift=0pt,
+    width=\linewidth,
+    height=5.5cm,
+    bar width=16pt,
+    ymin=0.5, ymax=4.5,
+    xlabel={\textbf{Latencia media (ns/op)}},
+    ytick={1,2,3,4},
+    yticklabels={{Control}, {FastBranch}, {FlexBranch}, {switch}},
+    xmin=0, xmax=18,
+    axis line style={gray!50},
+    major grid style={dashed, gray!20},
+    xmajorgrids=true,
+    ymajorgrids=false,
+    tickwidth=0pt,
+    nodes near coords,
+    nodes near coords align={horizontal},
+    nodes near coords style={font=\small\bfseries, anchor=west},
+    tick label style={font=\small\bfseries},
+    label style={font=\small},
+    error bars/x dir=both,
+    error bars/x explicit,
+    error bars/error bar style={very thick, black!60},
+    error bars/error mark options={rotate=90, mark size=4pt, thick, black!60},
+    legend style={at={(0.98,0.05)}, anchor=south east, draw=gray!30, fill=white, font=\scriptsize, row sep=1pt},
+]
+\addplot[fill=alertred!55, draw=alertred!70, thick]
+    coordinates {(13.45, 4) +- (0.52, 0)};
+\addplot[fill=coldblue!55, draw=coldblue!70, thick]
+    coordinates {(5.28, 3) +- (0.39, 0)};
+\addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
+    coordinates {(4.39, 2) +- (0.18, 0)};
+\addplot[fill=gray!30, draw=gray!50, thick]
+    coordinates {(4.10, 1) +- (0.21, 0)};
+\legend{\texttt{switch}, \texttt{FlexBranch}, \texttt{FastBranch}, Control (ideal)}
+
+\draw[dashed, thick, neoncyan!80] (axis cs:4.10,0.5) -- (axis cs:4.10,4.5)
+    node[pos=0.85, right, font=\tiny\itshape, text=neoncyan!80] {Límite teórico};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Latencia media por estrategia de \textit{dispatch} con intervalos de confianza al 95\%. La línea punteada indica el límite teórico del procesador. \texttt{FastBranch} converge a este límite.}
+\label{fig:latencia}
+\end{figure}
+
+% ---- GRÁFICO 2: Speedup con anotaciones ----
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    bar shift=0pt,
+    width=\linewidth,
+    height=6.5cm,
+    bar width=32pt,
+    xmin=0.5, xmax=3.5,
+    ylabel={\textbf{Speedup ($\times$)}},
+    xtick={1,2,3},
+    xticklabels={{switch}, {FlexBranch}, {FastBranch}},
+    ymin=0, ymax=4.2,
+    axis line style={gray!50},
+    major grid style={dashed, gray!20},
+    ymajorgrids=true,
+    xmajorgrids=false,
+    tickwidth=0pt,
+    tick label style={font=\small\bfseries},
+    label style={font=\small},
+    error bars/y dir=both,
+    error bars/y explicit,
+    error bars/error bar style={very thick, black!50},
+    error bars/error mark options={mark size=4pt, thick, black!50},
+    legend style={at={(0.5,1.03)}, anchor=south, legend columns=3, draw=gray!30, fill=white, font=\scriptsize},
+]
+
+\addplot[fill=alertred!55, draw=alertred!70, thick]
+    coordinates {(1, 1.00) +- (0, 0)};
+\addplot[fill=coldblue!55, draw=coldblue!70, thick]
+    coordinates {(2, 2.55) +- (0, 0.15)};
+\addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
+    coordinates {(3, 3.11) +- (0, 0.115)};
+\legend{\texttt{switch} (base), \texttt{FlexBranch}, \texttt{FastBranch}}
+
+\draw[dashed, thick, neoncyan!80] (axis cs:1,3.28) -- (axis cs:3,3.28)
+    node[pos=0.5, above, font=\scriptsize\itshape, text=neoncyan!80] {Ideal: $3.28\times$};
+
+\node[anchor=south, font=\scriptsize, text=techblue] at (axis cs:3,3.35) {$d = 4.71$};
+
+\end{axis}
+\end{tikzpicture}
+\caption{\textit{Speedup} relativo al \texttt{switch} nativo con IC al 95\%. Cohen's $d = 4.71$ indica diferencia masiva. La línea punteada muestra el límite sin \textit{dispatch} condicional.}
+\label{fig:speedup}
+\end{figure}
+
+\subsection{Validación Estadística}
+La prueba $t$ de Welch (bilateral, $\alpha = 0.05$) confirmó la significancia de todas las comparaciones (Cuadro~\ref{tab:ttest}).
+
+\begin{table}[ht]
+\centering
+\caption{Resultados de la prueba $t$ de Welch ($\alpha = 0.05$, bilateral)}
+\label{tab:ttest}
+\begin{tabular}{@{}lcccl@{}}
+\toprule
+\textbf{Comparación} & \textbf{$t$} & \textbf{$d$} & \textbf{$p$} & \textbf{Veredicto} \\ \midrule
+\texttt{switch} vs \texttt{FastBranch}     & 33.28 & 4.71 & $<0.001$ & Masivo \\
+\texttt{switch} vs \texttt{FlexBranch}     & 25.51 & 3.61 & $<0.001$ & Grande \\
+\texttt{FastBranch} vs \texttt{FlexBranch} & $-4.24$ & 0.60 & $<0.001$ & Medio \\
+\texttt{FastBranch} vs Control             & 2.19  & 0.31 & $0.031$ & Pequeño \\ \bottomrule
+\end{tabular}
+\end{table}
+
+El IC al 95\% del \textit{speedup} de \texttt{FastBranch} fue $[3.00\times, 3.23\times]$: en ninguno de los 100 ensayos bajó de $3\times$.
+
+\subsection{Hallazgos Negativos}
+
+\subsubsection{Contención de Caché en Multi-threading}
+Al evaluar \texttt{AtomicFastBranch} con 11 \textit{hot threads} compartiendo contadores atómicos, el rendimiento colapsó a $0.43\times$ del caso mono-hilo. La causa fue \textit{false sharing} bajo el protocolo MESI: cada \texttt{fetch\_add} desde un núcleo distinto invalida la línea de caché de los restantes, serializando la ejecución.
+
+\subsubsection{Predictor vs. Semi-Static}
+Cuando la condición cambia infrecuentemente ($1/10^4$ operaciones), el BPU acierta $>$99.9\% de las veces. En este escenario, \texttt{if/else} superó a \texttt{FastBranch} por un 26\%, dado que el costo del \texttt{call} indirecto excede al del salto correctamente predicho.

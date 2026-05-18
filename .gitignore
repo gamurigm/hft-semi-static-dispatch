@@ -1,0 +1,54 @@
+# ==========================================
+# C++ High-Frequency Trading Project
+# ==========================================
+
+# 1. Compilados y Binarios
+*.exe
+*.o
+*.obj
+*.dll
+*.so
+*.dylib
+*.out
+*.app
+bin/
+build/
+obj/
+
+# 2. Entornos de Desarrollo e IDEs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
+.DS_Store
+
+# 3. Archivos Temporales LaTeX
+# Ignoramos la compilación intermedia, PERO mantenemos los fuentes y el PDF final
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/*.bbl
+paper/*.blg
+
+# 4. Documentación No Relevante (Legacy, Markdown, PDFs de Referencia)
+# El usuario solicitó ignorar toda la documentación EXCEPTO el LaTeX final
+legacy_docs/
+references/
+*.md
+!README.md
+
+# 5. Código No Relevante / Demos Viejos
+# Solo se rastrea el src/, include/, tests/ y examples/ core.
+examples/branch_changer.hpp
+examples/*_demo*.cpp
+hft_demo
+
+# FIN DEL GITIGNORE

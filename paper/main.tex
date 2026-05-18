@@ -1,0 +1,48 @@
+% =====================================================================
+% main.tex — Documento Principal (Modular)
+%
+% Autor: Gabriel Omar Murillo Medina
+% Universidad de las Fuerzas Armadas — ESPE
+% Ingeniería en Software
+%
+% Compilar: pdflatex main.tex (x2 para referencias cruzadas)
+% =====================================================================
+
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+
+% --- Preámbulo modular ---
+\input{preambulo.tex}
+
+\begin{document}
+
+% --- Metadatos ---
+\title{Beyond Branch Prediction: A Monte Carlo Validation\\of Semi-Static Dispatch in C++17\\for Ultra-Low Latency Systems}
+
+\author{Gabriel Omar Murillo Medina\\
+        \textit{Ingeniería en Software}\\
+        \textit{Universidad de las Fuerzas Armadas --- ESPE}\\
+        Sangolquí, Ecuador\\
+        gomurillo@espe.edu.ec}
+
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+En sistemas de trading de alta frecuencia (HFT), las penalizaciones por predicción fallida de ramas (\textit{branch misprediction}) representan una fuente crítica de latencia no determinista. Este trabajo implementa y valida experimentalmente la técnica de condiciones semi-estáticas propuesta por Bilokon et al. (2025) mediante \texttt{FastBranch}, una abstracción \textit{header-only} en C++17 que desacopla la evaluación de condiciones del flujo de ejecución crítico. Se condujo un análisis Monte Carlo con $K = 100$ ensayos independientes ($N = 5 \times 10^6$ operaciones cada uno), totalizando $5 \times 10^8$ observaciones. Los resultados demuestran un \textit{speedup} estadísticamente significativo de $3.11\times$ ($t = 33.28$, $p < 0.001$, Cohen's $d = 4.71$), reduciendo la latencia de 13.45 ns/op a 4.39 ns/op --- convergiendo al límite teórico del procesador (4.10 ns/op). Se identifican además condiciones de contorno donde la técnica resulta contraproducente, incluyendo un \textit{overhead} del 20.2\% por \textit{type erasure} en \texttt{std::function} y degradación por contención de caché en escenarios multi-hilo.
+\end{abstract}
+
+\begin{IEEEkeywords}
+branch misprediction, semi-static conditions, function pointer dispatch, speculative execution, pipeline optimization, C++17 metaprogramming, low-latency software architecture, Monte Carlo simulation, statistical validation, high-frequency trading
+\end{IEEEkeywords}}
+
+\maketitle
+\IEEEdisplaynontitleabstractindextext
+\IEEEpeerreviewmaketitle
+
+% --- Secciones modulares ---
+\input{sec_introduccion.tex}
+\input{sec_metodologia.tex}
+\input{sec_resultados.tex}
+\input{sec_discusion.tex}
+\input{sec_conclusiones.tex}
+\input{sec_referencias.tex}
+
+\end{document}

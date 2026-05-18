@@ -34,8 +34,8 @@ montecarlo_o2
 *~
 .DS_Store
 
-# 3. Archivos Temporales LaTeX
-# Ignoramos la compilación intermedia, PERO mantenemos los fuentes y el PDF final
+# 3. Archivos Temporales y Fuentes LaTeX
+# Ignoramos la compilación intermedia y los archivos fuentes (.tex), manteniendo solo el PDF final
 paper/*.aux
 paper/*.log
 paper/*.out
@@ -45,6 +45,7 @@ paper/*.fdb_latexmk
 paper/*.synctex.gz
 paper/*.bbl
 paper/*.blg
+paper/*.tex
 texput.log
 last_run_results.txt
 

@@ -49,10 +49,11 @@ texput.log
 last_run_results.txt
 
 # 4. Documentación No Relevante (Legacy, Markdown, PDFs de Referencia)
-# El usuario solicitó ignorar toda la documentación EXCEPTO el LaTeX final
+# El usuario solicitó ignorar toda la documentación EXCEPTO el PDF final del paper
 legacy_docs/
 references/
 *.md
+!paper/main.pdf
 !README.md
 
 # 5. Código No Relevante / Demos Viejos

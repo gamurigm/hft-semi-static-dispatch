@@ -55,6 +55,7 @@ legacy_docs/
 references/
 *.md
 !paper/main.pdf
+!README.md
 
 # 5. Código No Relevante / Demos Viejos
 # Solo se rastrea el src/, include/, tests/ y examples/ core.

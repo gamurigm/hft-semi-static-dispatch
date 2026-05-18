@@ -1,4 +1,4 @@
-# High-Frequency Trading Semi-Static Dispatch Optimization in C++17
+# Microarchitectural Dispatch Optimization: Semi-Static Cache-Aware Devirtualization in Ultra-Low Latency C++17
 
 [![C++ Standard](https://img.shields.io/badge/C%2B%2B-17-blue.svg?style=flat-round&logo=c%2B%2B)](https://en.cppreference.com/w/cpp/17)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg?style=flat-round)](#compilation-and-benchmarking)

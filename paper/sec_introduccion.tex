@@ -1,17 +1,17 @@
 % sec_introduccion.tex
-% Sección 1: Introducción
-\section{Introducción}
+% Section 1: Introduction
+\section{Introduction}
 
-\IEEEPARstart{E}{n} la microestructura de los mercados financieros electrónicos, la latencia de procesamiento constituye el factor diferenciador entre la captura y la pérdida de oportunidades de arbitraje estadístico. En sistemas de High-Frequency Trading (HFT), donde las ventanas de oportunidad se miden en nanosegundos, cualquier fuente de indeterminismo en el \textit{critical path} de ejecución representa un riesgo operacional cuantificable \cite{bilokon2025}.
+\IEEEPARstart{I}{n} the microstructure of electronic financial markets, processing latency constitutes the key differentiating factor between capturing or losing statistical arbitrage opportunities. In High-Frequency Trading (HFT) systems, where opportunity windows are measured in nanoseconds, any source of non-determinism in the execution critical path represents a quantifiable operational risk \cite{bilokon2025}.
 
-Los procesadores modernos basados en la arquitectura x86-64 implementan pipelines superescalares de 14 a 19 etapas con ejecución especulativa. Ante cada instrucción de salto condicional (\texttt{jcc}), el \textit{Branch Prediction Unit} (BPU) --- típicamente un predictor TAGE (\textit{Tagged Geometric History Length}) con contadores saturados de 2 bits --- especula sobre el resultado antes de la evaluación efectiva de la condición \cite{intel2012}. Un fallo de predicción (\textit{misprediction}) desencadena el vaciado completo del pipeline (\textit{pipeline flush}), imponiendo una penalización determinista de 13--18 ciclos de reloj \cite{fog2023}.
+Modern processors based on the x86-64 architecture implement 14- to 19-stage super-scalar pipelines with speculative execution. Upon encountering each conditional jump instruction (\texttt{jcc}), the Branch Prediction Unit (BPU) --- typically a TAGE (\textit{Tagged Geometric History Length}) predictor using 2-bit saturating counters --- speculates on the branch outcome before the condition is formally evaluated \cite{intel2012}. A branch misprediction triggers a complete pipeline flush, imposing a deterministic penalty of 13--18 clock cycles \cite{fog2023}.
 
-Bilokon et al. \cite{bilokon2025} proponen una solución arquitectónica: las \textbf{condiciones semi-estáticas}. La técnica consiste en eliminar completamente la instrucción condicional del \textit{hot path} mediante Self-Modifying Code (SMC), delegando la actualización del estado a un \textit{cold path} asíncrono.
+Bilokon et al. \cite{bilokon2025} propose an architectural solution: \textbf{semi-static conditions}. This technique completely eliminates the conditional jump instruction from the \textit{hot path} using Self-Modifying Code (SMC) or indirect branches, delegating state updates to an asynchronous \textit{cold path}.
 
-El presente trabajo persigue cuatro objetivos:
+The present work pursues four main objectives:
 \begin{enumerate}
-    \item Cuantificar el \textit{speedup} real de la técnica semi-estática sobre \texttt{switch}/\texttt{if-else} con condiciones uniformemente aleatorias.
-    \item Medir el \textit{overhead} de \texttt{std::function} frente a punteros crudos a función.
-    \item Evaluar la viabilidad del multi-threading para este patrón.
-    \item Identificar las condiciones bajo las cuales la técnica resulta contraproducente.
+    \item Quantify the real \textit{speedup} of the semi-static technique over standard \texttt{switch}/\texttt{if-else} control blocks under uniform-random conditions.
+    \item Measure the runtime \textit{overhead} of \texttt{std::function} compared to raw function pointers.
+    \item Evaluate the multi-threading viability of this pattern.
+    \item Identify the boundary conditions where this technique becomes counterproductive.
 \end{enumerate}

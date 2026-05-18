@@ -1,8 +1,8 @@
 % sec_resultados.tex
-% Sección 3: Resultados
-\section{Resultados}
+% Section 3: Results
+\section{Results}
 
-% ---- DIAGRAMA: Pipeline CPU (problema vs solución) - Dos Columnas en la Última Página ----
+% ---- DIAGRAMA: CPU Pipeline (problem vs solution) - Two Columns on the Last Page ----
 \begingroup
 \renewcommand{\thefigure}{1}
 \begin{figure*}[t]
@@ -19,17 +19,17 @@
     brace/.style={decorate, decoration={brace, amplitude=5pt, mirror}}
 ]
 
-% === CASO A: switch con misprediction ===
+% === CASE A: switch with misprediction ===
 \node[label] at (-0.3, 0) {(a) \texttt{switch}};
 
-% Pipeline stages - instrucciones correctas antes del branch
+% Pipeline stages - correct instructions before the branch
 \node[good] (a1) at (1, 0) {IF};
 \node[good] (a2) at (2.2, 0) {ID};
 \node[good] (a3) at (3.4, 0) {EX};
 \node[good] (a4) at (4.6, 0) {MEM};
 \node[good] (a5) at (5.8, 0) {WB};
 
-% Branch condicional - especulación
+% Conditional branch - speculation
 \node[spec] (b1) at (7.0, 0) {IF};
 \node[spec] (b2) at (8.2, 0) {ID};
 \node[spec] (b3) at (9.4, 0) {EX};
@@ -37,23 +37,23 @@
 % Misprediction! Flush
 \node[bad] (x) at (10.6, 0) {\textbf{FLUSH}};
 
-% Ciclos desperdiciados
+% Wasted cycles
 \node[flush] (f1) at (11.8, 0) {---};
 \node[flush] (f2) at (13.0, 0) {---};
 \node[flush] (f3) at (14.2, 0) {---};
 
-% Reinicio
+% Restart
 \node[good] (r1) at (15.4, 0) {IF};
 
-% Anotaciones
-\draw[brace, alertred!70] (b1.south west) -- (f3.south east) node[midway, below=6pt, font=\tiny, text=alertred] {Penalización: 14--18 ciclos perdidos};
-\node[font=\tiny\itshape, text=alertred, anchor=south] at (x.north) {BPU falla};
+% Annotations
+\draw[brace, alertred!70] (b1.south west) -- (f3.south east) node[midway, below=6pt, font=\tiny, text=alertred] {Penalty: 14--18 cycles lost};
+\node[font=\tiny\itshape, text=alertred, anchor=south] at (x.north) {BPU fails};
 \draw[-{Stealth}, thick, alertred!60] (9.8, 0.5) -- (10.3, 0.2);
 
-% === CASO B: FastBranch (sin rama condicional) ===
+% === CASE B: FastBranch (no conditional branch) ===
 \node[label] at (-0.3, -1.5) {(b) \texttt{FastBranch}};
 
-% Pipeline continuo sin interrupción
+% Continuous pipeline without interruption
 \node[good] (c1) at (1, -1.5) {IF};
 \node[good] (c2) at (2.2, -1.5) {ID};
 \node[good] (c3) at (3.4, -1.5) {EX};
@@ -68,38 +68,38 @@
 \node[good] (c12) at (14.2, -1.5) {ID};
 \node[good] (c13) at (15.4, -1.5) {EX};
 
-% Anotación
-\draw[brace, hotgreen!70, decoration={mirror}] (c1.south west) -- (c13.south east) node[midway, below=6pt, font=\tiny, text=hotgreen!80!black] {Flujo continuo: 0 ciclos perdidos (sin instrucción condicional)};
+% Annotation
+\draw[brace, hotgreen!70, decoration={mirror}] (c1.south west) -- (c13.south east) node[midway, below=6pt, font=\tiny, text=hotgreen!80!black] {Continuous flow: 0 cycles lost (no conditional instruction)};
 
-\node[font=\tiny\itshape, text=hotgreen!80!black, anchor=south] at (7.0, -1.0) {\texttt{call} indirecto (pre-configurado)};
+\node[font=\tiny\itshape, text=hotgreen!80!black, anchor=south] at (7.0, -1.0) {Indirect \texttt{call} (pre-configured)};
 \draw[-{Stealth}, thick, hotgreen!60] (7.0, -1.05) -- (7.0, -1.25);
 
 \end{tikzpicture}
 }
-\caption{Comparativa del pipeline del CPU. (a)~Con \texttt{switch}: una predicción fallida del BPU provoca el vaciado del pipeline (\textit{flush}), desperdiciando 14--18 ciclos. (b)~Con \texttt{FastBranch}: no existe instrucción condicional; el salto indirecto está pre-configurado y el pipeline fluye sin interrupción.}
+\caption{CPU pipeline comparison. (a)~With \texttt{switch}: a BPU misprediction triggers a pipeline flush, wasting 14--18 cycles. (b)~With \texttt{FastBranch}: there is no conditional instruction; the indirect branch is pre-configured, and the pipeline flows without interruption.}
 \label{fig:pipeline}
 \end{figure*}
 \endgroup
 \addtocounter{figure}{-1}
 
-\subsection{Análisis Monte Carlo: Reducción de Latencia}
-El Cuadro~\ref{tab:montecarlo} resume las estadísticas descriptivas obtenidas sobre los 100 ensayos independientes ($5\times10^6$ ops/ensayo). La Fig.~\ref{fig:latencia} visualiza la comparativa por estrategia.
+\subsection{Monte Carlo Analysis: Latency Reduction}
+Table~\ref{tab:montecarlo} summarizes the descriptive statistics obtained over the 100 independent trials ($5\times10^6$ ops/trial). Fig.~\ref{fig:latencia} visualizes the performance comparison across strategies.
 
 \begin{table}[ht]
 \centering
-\caption{Estadísticas descriptivas de latencia ($K=100$, $N=5\times10^6$)}
+\caption{Descriptive statistics of latency ($K=100$, $N=5\times10^6$)}
 \label{tab:montecarlo}
 \begin{tabular}{@{}lcccc@{}}
 \toprule
-\textbf{Estrategia} & \textbf{$\bar{x}$ (ns/op)} & \textbf{Tiempo (ms)} & \textbf{Speedup} & \textbf{vs. switch} \\ \midrule
-\texttt{switch} 4 casos     & $13.81$ & $69.0$ & $1.00\times$ & línea base \\
+\textbf{Strategy} & \textbf{$\bar{x}$ (ns/op)} & \textbf{Time (ms)} & \textbf{Speedup} & \textbf{vs. switch} \\ \midrule
+\texttt{switch} 4 cases     & $13.81$ & $69.0$ & $1.00\times$ & baseline \\
 \texttt{FlexBranch}         & $\phantom{0}4.85$ & $24.2$ & $2.85\times$ & $-64.9\%$ \\
 \textbf{\texttt{FastBranch}} & $\mathbf{\phantom{0}4.57}$ & $\mathbf{22.8}$ & $\mathbf{3.02\times}$ & $\mathbf{-66.9\%}$ \\
-Control directo              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.8\%$ \\ \bottomrule
+Direct control              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.8\%$ \\ \bottomrule
 \end{tabular}
 \end{table}
 
-% ---- GRÁFICO 1: Barras horizontales con IC 95% (Bootstrap) ----
+% ---- PLOT 1: Horizontal bars with 95% CI (Bootstrap) ----
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}
@@ -107,10 +107,10 @@ Control directo              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.
     xbar,
     bar shift=0pt,
     width=0.82\linewidth,
-    height=4.0cm,        % Further compacted to ensure Conclusions and References fit perfectly on Page 3
+    height=4.0cm,        % Compacted to ensure Conclusions and References fit perfectly on Page 3
     bar width=11pt,
     ymin=0.5, ymax=4.5,
-    xlabel={\textbf{Latencia media (ns/op)}},
+    xlabel={\textbf{Mean latency (ns/op)}},
     ytick={1,2,3,4},
     yticklabels={{Control (ideal)}, {FastBranch}, {FlexBranch}, {switch}},
     xmin=0, xmax=17,
@@ -144,15 +144,15 @@ Control directo              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.
     coordinates {(3.90, 1) +- (0.25, 0)};
 
 \draw[dashed, thick, techblue!60] (axis cs:3.90,0.5) -- (axis cs:3.90,4.5)
-    node[pos=0.95, right, font=\scriptsize\itshape, text=techblue] {Límite teórico};
+    node[pos=0.95, right, font=\scriptsize\itshape, text=techblue] {Theoretical limit};
 
 \end{axis}
 \end{tikzpicture}
-\caption{Latencia media por estrategia con intervalos de confianza empíricos al 95\% (Bootstrap, $B=10\,000$). La línea punteada indica el límite teórico (control directo sin \textit{dispatch}). \texttt{FastBranch} converge a este límite con diferencia estadísticamente significativa respecto al \texttt{switch} ($p < 0.0001$).}
+\caption{Mean latency per strategy with 95\% empirical confidence intervals (Bootstrap, $B=10\,000$). The dashed line indicates the theoretical limit (direct control without dispatch). \texttt{FastBranch} converges to this limit with a statistically significant difference compared to the \texttt{switch} ($p < 0.0001$).}
 \label{fig:latencia}
 \end{figure}
 
-% ---- GRÁFICO 2: Speedup ----
+% ---- PLOT 2: Speedup ----
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}
@@ -160,7 +160,7 @@ Control directo              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.
     ybar,
     bar shift=0pt,
     width=0.82\linewidth,
-    height=4.4cm,        % Further compacted to ensure Conclusions and References fit perfectly on Page 3
+    height=4.4cm,        % Compacted to ensure Conclusions and References fit perfectly on Page 3
     bar width=24pt,
     xmin=0.5, xmax=3.5,
     ylabel={\textbf{Speedup ($\times$)}},
@@ -188,40 +188,39 @@ Control directo              & $\phantom{0}3.90$ & $19.5$ & $3.54\times$ & $-71.
     coordinates {(3, 3.02) +- (0, 0.12)};
 
 \draw[dashed, thick, techblue!60] (axis cs:0.5,3.54) -- (axis cs:3.5,3.54)
-    node[pos=0.05, above, font=\scriptsize\itshape, text=techblue] {Límite Ideal: $3.54\times$};
+    node[pos=0.05, above, font=\scriptsize\itshape, text=techblue] {Ideal Limit: $3.54\times$};
 
-% Changed anchor to east and positioned at 3.4 to prevent cutting off text at the right edge
-\node[anchor=east, font=\footnotesize\bfseries, text=techblue] at (axis cs:3.4,4.20) {IC$_{95\%}$: [2.90$\times$, 3.14$\times$]};
+\node[anchor=east, font=\footnotesize\bfseries, text=techblue] at (axis cs:3.4,4.20) {CI$_{95\%}$: [2.90$\times$, 3.14$\times$]};
 
 \end{axis}
 \end{tikzpicture}
-\caption{\textit{Speedup} relativo al \texttt{switch} nativo con IC Bootstrap al 95\%. Cohen's $d = 1.82$ indica diferencia grande. La línea punteada muestra el límite sin \textit{dispatch} condicional. IC empírico para \texttt{FastBranch}: $[2.90\times, 3.14\times]$.}
+\caption{Speedup relative to native \texttt{switch} with 95\% Bootstrap CI. Cohen's $d = 1.82$ indicates a large difference. The dashed line shows the limit without conditional dispatch. Empirical CI for \texttt{FastBranch}: $[2.90\times, 3.14\times]$.}
 \label{fig:speedup}
 \end{figure}
 
-\subsection{Validación Estadística (Bootstrapping)}
-El análisis paramétrico tradicional fue reemplazado por un remuestreo \textit{Bootstrap} ($B = 10,000$ iteraciones con reemplazo). Este método empírico confirmó la robustez de las diferencias, calculando el valor $p$ de remuestreo ($p_{\text{boot}}$) sobre la distribución real de los tiempos de CPU (Cuadro~\ref{tab:bootstrap}).
+\subsection{Statistical Validation (Bootstrapping)}
+The traditional parametric analysis was replaced by a Bootstrap resampling ($B = 10\,000$ iterations with replacement). This empirical method confirmed the robustness of the differences, calculating the resampling p-value ($p_{\text{boot}}$) on the actual CPU time distribution (Table~\ref{tab:bootstrap}).
 
 \begin{table}[ht]
 \centering
-\caption{Resultados del Análisis Bootstrap ($B=10,000$, IC al 95\% empírico)}
+\caption{Bootstrap Analysis Results ($B=10\,000$, empirical 95\% CI)}
 \label{tab:bootstrap}
 \begin{tabular}{@{}lcccl@{}}
 \toprule
-\textbf{Comparación} & \textbf{IC 95\% (ns)} & \textbf{$d$} & \textbf{$p_{\text{boot}}$} & \textbf{Veredicto} \\ \midrule
-\texttt{switch} vs \texttt{FastBranch}     & $[8.95,\ 9.55]$ & 1.82 & $<0.0001$ & Grande \\
-\texttt{switch} vs \texttt{FlexBranch}     & $[8.70,\ 9.25]$ & 1.69 & $<0.0001$ & Grande \\
-\texttt{FlexBranch} vs \texttt{FastBranch} & $[0.00,\ 0.55]$ & 0.08 & $0.2053$  & Pequeño \\
-\texttt{FastBranch} vs Control             & $[0.00,\ 0.67]$ & 0.20 & $0.0201$  & Pequeño \\ \bottomrule
+\textbf{Comparison} & \textbf{95\% CI (ns)} & \textbf{$d$} & \textbf{$p_{\text{boot}}$} & \textbf{Verdict} \\ \midrule
+\texttt{switch} vs \texttt{FastBranch}     & $[8.95,\ 9.55]$ & 1.82 & $<0.0001$ & Large \\
+\texttt{switch} vs \texttt{FlexBranch}     & $[8.70,\ 9.25]$ & 1.69 & $<0.0001$ & Large \\
+\texttt{FlexBranch} vs \texttt{FastBranch} & $[0.00,\ 0.55]$ & 0.08 & $0.2053$  & Small \\
+\texttt{FastBranch} vs Control             & $[0.00,\ 0.67]$ & 0.20 & $0.0201$  & Small \\ \bottomrule
 \end{tabular}
 \end{table}
 
-El IC Bootstrap al 95\% del \textit{speedup} de \texttt{FastBranch} se estabilizó en $[2.90\times, 3.14\times]$. La ventaja arquitectónica es estadísticamente significativa y contundente con respecto al \texttt{switch} aleatorio, logrando un ahorro neto de latencia de $\sim11.8$ ns por operación.
+The 95\% Bootstrap CI of the \texttt{FastBranch} speedup stabilized at $[2.90\times, 3.14\times]$. The architectural advantage is statistically significant and highly dominant compared to the random \texttt{switch}, yielding a net latency saving of $\sim11.8$ ns per operation.
 
-\subsection{Hallazgos Negativos}\label{sec:negativos}
+\subsection{Negative Findings}\label{sec:negativos}
 
-\subsubsection{Contención de Caché en Multi-threading}
-El rendimiento colapsó a $0.45\times$ del caso mono-hilo. La causa fue \textit{false sharing} bajo el protocolo MESI: cada \texttt{fetch\_add} desde un núcleo distinto invalida la línea de caché de los restantes, serializando la ejecución.
+\subsubsection{Multi-threaded Cache Contention}
+Performance collapsed to $0.45\times$ of the single-threaded case. The cause was \textit{false sharing} under the MESI protocol: each \texttt{fetch\_add} from a different core invalidates the cache line of the remaining ones, effectively serializing execution.
 
 \subsubsection{Predictor vs. Semi-Static}
-Cuando la condición cambia infrecuentemente ($1/10^4$ operaciones), el BPU alcanza una tasa de acierto elevada. En este escenario, \texttt{if/else} predecible superó a \texttt{FastBranch} en $22.3\%$ ($30.4$ ms vs $37.2$ ms), confirmando que el costo del \texttt{call} indirecto excede al del salto correctamente predicho.
+When the condition changes infrequently ($1/10^4$ operations), the BPU achieves a high hit rate. In this scenario, the predictable \texttt{if/else} outperformed \texttt{FastBranch} by $22.3\%$ ($30.4$ ms vs $37.2$ ms), confirming that the overhead of an indirect \texttt{call} exceeds that of a correctly predicted jump.

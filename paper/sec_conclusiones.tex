@@ -1,10 +1,10 @@
 % sec_conclusiones.tex
-% Sección 5: Conclusiones
-\section{Conclusiones}
+% Section 5: Conclusions
+\section{Conclusions}
 
 \begin{enumerate}
-    \item \texttt{FastBranch} alcanza una latencia de 4.57 ns/op, convergiendo exitosamente al límite teórico físico (3.90 ns/op) con un \textit{speedup} empírico medio de $3.02\times$ (IC 95\%: $[2.90\times, 3.14\times]$, Cohen's $d = 1.82$, $p_{\text{boot}} < 0.0001$).
-    \item La dispersión y \textit{jitter} temporal se reduce significativamente ($\sigma \approx 0.87$ ns frente a 1.88 ns en \texttt{switch}), dotando al motor de \textit{branching} de un determinismo crítico para la microestructura de trading.
-    \item El uso de punteros crudos acoplados con aislamiento físico de caché (\texttt{alignas(64)}) y semántica \textit{lock-free} en C++17 elimina la penalización por \textit{false sharing} inter-hilo, permitiendo escalabilidad multi-core sin contención en el \textit{hot path}.
-    \item Se valida que la técnica semi-estática es contraproducente frente al predictor de hardware BPU únicamente cuando la condición tiene una estabilidad superior al 99.9\% ($f_{\text{set}} \le 1/10^4$), confirmando su superioridad en escenarios de mercado volátiles e impredecibles.
+    \item \texttt{FastBranch} achieves a mean latency of 4.57 ns/op, successfully converging to the theoretical physical limit (3.90 ns/op) with an empirical mean speedup of $3.02\times$ (95\% CI: $[2.90\times, 3.14\times]$, Cohen's $d = 1.82$, $p_{\text{boot}} < 0.0001$).
+    \item Temporal dispersion and jitter are significantly reduced ($\sigma \approx 0.87$ ns compared to 1.88 ns for the \texttt{switch}), equipping the branching engine with a level of determinism that is critical for market microstructure trading.
+    \item The use of raw function pointers coupled with physical cache-line isolation (\texttt{alignas(64)}) and lock-free semantics in C++17 eliminates the penalty of inter-thread false sharing, enabling multi-core scalability without hot-path contention.
+    \item The semi-static technique is validated as counterproductive compared to the hardware BPU only when the condition stability exceeds 99.9\% ($f_{\text{set}} \le 1/10^4$), confirming its superiority in highly volatile and unpredictable market scenarios.
 \end{enumerate}

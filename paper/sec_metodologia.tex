@@ -1,41 +1,37 @@
 % sec_metodologia.tex
-% Sección 2: Materiales y Métodos
-\section{Materiales y Métodos}
+% Section 2: Materials and Methods
+\section{Materials and Methods}
 
-\subsection{Diseño Experimental}
-Se diseñó un protocolo de validación estadística basado en simulaciones Monte Carlo con $K = 100$ ensayos independientes, cada uno con semilla pseudoaleatoria única generada mediante \texttt{std::random\_device}. Cada ensayo procesó $N = 5 \times 10^6$ operaciones de \textit{dispatch} condicional, totalizando $5 \times 10^8$ observaciones experimentales.
+\subsection{Experimental Design}
+We designed a statistical validation protocol based on Monte Carlo simulations with $K = 100$ independent trials, each utilizing a unique pseudorandom seed generated via \texttt{std::random\_device}. Each trial processed $N = 5 \times 10^6$ conditional dispatch operations, totaling $5 \times 10^8$ experimental observations.
 
-Se evaluaron cuatro estrategias de \textit{dispatch}:
+Four dispatch strategies were evaluated:
 \begin{itemize}
-    \item \textbf{\texttt{switch} nativo:} Evaluación condicional en cada iteración (línea base).
-    \item \textbf{\texttt{FastBranch}:} Propuesta experimental con punteros crudos y actualización infrecuente ($f_{\text{set}} = 1/1000$).
-    \item \textbf{\texttt{FlexBranch}:} Variante con \texttt{std::function} para cuantificar el costo de la abstracción.
-    \item \textbf{Control directo:} Llamada sin \textit{dispatch} condicional (límite teórico).
+    \item \textbf{Native \texttt{switch}:} Conditional evaluation at each iteration (baseline).
+    \item \textbf{\texttt{FastBranch}:} Experimental proposal with raw function pointers and infrequent updates ($f_{\text{set}} = 1/1000$).
+    \item \textbf{\texttt{FlexBranch}:} Variant with \texttt{std::function} to quantify abstraction overhead.
+    \item \textbf{Direct control:} Branchless call without conditional dispatch (theoretical limit).
 \end{itemize}
 
-Las diferencias se validaron mediante un análisis estadístico no paramétrico de remuestreo (\textit{Bootstrapping}) con $B = 10,000$ iteraciones. Este enfoque permite construir intervalos de confianza (IC) empíricos al 95\%, mitigando las asunciones de normalidad paramétrica que suelen violarse en mediciones de latencia de hardware por interrupciones del SO. Se reporta adicionalmente el tamaño del efecto mediante la $d$ de Cohen.
+The differences were validated through a non-parametric bootstrap resampling statistical analysis with $B = 10\,000$ iterations. This approach allows the construction of empirical 95\% confidence intervals (CIs), mitigating parametric normality assumptions that are typically violated in hardware latency measurements due to OS interrupts. Additionally, the effect size is reported using Cohen's $d$.
 
-\subsection{El Problema: Pipeline Flush}
+\subsection{The Problem: Pipeline Flush}
+Fig.~\ref{fig:pipeline} illustrates the mechanism by which a misprediction degrades super-scalar pipeline performance. When the BPU mispredicts, all speculatively executed instructions are discarded, generating a 14--18 cycle bubble.
 
-La Fig.~\ref{fig:pipeline} ilustra el mecanismo por el cual una predicción fallida destruye el rendimiento del pipeline superescalar. Cuando el BPU falla, todas las instrucciones ejecutadas especulativamente se descartan, generando una burbuja de 14--18 ciclos.
-
-
-% El diagrama de pipeline (Fig 1) ha sido trasladado a la discusión para ubicarse en la última página ocupando dos columnas.
-
-\subsection{Implementación y Arquitectura}
-Se desarrolló la biblioteca \texttt{semi\_static.hpp} (\textit{header-only}, C++17) con cuatro variantes (Cuadro~\ref{tab:clases}). La arquitectura central se basa en el desacoplamiento físico entre la evaluación de la condición (\textit{cold path}) y la ejecución del \textit{dispatch} (\textit{hot path}), como se ilustra en la Fig.~\ref{fig:arquitectura}.
+\subsection{Implementation and Architecture}
+The \texttt{semi\_static.hpp} library was developed (header-only, C++17) with four variants (Table~\ref{tab:clases}). The core architecture is based on the physical decoupling between condition evaluation (\textit{cold path}) and dispatch execution (\textit{hot path}), as illustrated in Fig.~\ref{fig:arquitectura}.
 
 \begin{table}[ht]
 \centering
-\caption{Variantes implementadas en \texttt{semi\_static.hpp}}
+\caption{Variants implemented in \texttt{semi\_static.hpp}}
 \label{tab:clases}
 \begin{tabular}{@{}lccc@{}}
 \toprule
-\textbf{Clase} & \textbf{Mecanismo} & \textbf{Heap} & \textbf{Thread-safe} \\ \midrule
+\textbf{Class} & \textbf{Mechanism} & \textbf{Heap} & \textbf{Thread-safe} \\ \midrule
 \texttt{FastBranch}       & Array \texttt{FuncPtr}   & No & No \\
-\texttt{AtomicFastBranch} & Ídem + \texttt{atomic}   & No & Sí \\
-\texttt{FlexBranch}       & \texttt{vector<function>} & Sí & No \\
-\texttt{AtomicFlexBranch} & Ídem + \texttt{atomic}   & Sí & Sí \\ \bottomrule
+\texttt{AtomicFastBranch} & Ditto + \texttt{atomic}   & No & Yes \\
+\texttt{FlexBranch}       & \texttt{vector<function>} & Yes & No \\
+\texttt{AtomicFlexBranch} & Ditto + \texttt{atomic}   & Yes & Yes \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -48,17 +44,17 @@ Se desarrolló la biblioteca \texttt{semi\_static.hpp} (\textit{header-only}, C+
     cline/.style={rectangle, draw=gray!40, fill=gray!5, dashed, rounded corners=1mm, minimum width=3.8cm, minimum height=1.3cm},
     cell/.style={rectangle, draw=gray!50, fill=white, minimum width=1.4cm, minimum height=0.6cm, font=\scriptsize\ttfamily},
     arrow/.style={-{Stealth[scale=1.1]}, thick},
-]
+ ]
 
 % Cache Line 1
 \node[cline] (line1) at (-2.1, 0) {};
-\node[font=\scriptsize\itshape, text=gray!80!black, anchor=south] at (line1.north) {Línea Caché A (Read-Only)};
+\node[font=\scriptsize\itshape, text=gray!80!black, anchor=south] at (line1.north) {Cache Line A (Read-Only)};
 \node[cell] (p0) at (-2.9, 0) {ptrs[0]};
 \node[cell] (p1) at (-1.3, 0) {ptrs[1]};
 
 % Cache Line 2
 \node[cline, draw=techblue!50, fill=techblue!5] (line2) at (2.4, 0) {};
-\node[font=\scriptsize\itshape, text=techblue, anchor=south] at (line2.north) {Línea Caché B (alignas 64)};
+\node[font=\scriptsize\itshape, text=techblue, anchor=south] at (line2.north) {Cache Line B (alignas 64)};
 \node[cell, draw=techblue, thick] (idx) at (2.4, 0) {atomic\_idx};
 
 % Threads
@@ -73,12 +69,12 @@ Se desarrolló la biblioteca \texttt{semi\_static.hpp} (\textit{header-only}, C+
 \draw[-{Stealth[scale=1.1]}, thick, hotgreen, dashed] (core1.south-|p1.north) -- (p1.north) node[midway, left, font=\scriptsize, text=hotgreen!80!black] {dispatch (call)};
 
 % Annotation
-\node[font=\scriptsize, text=alertred!80!black, align=center] at (0.1, -1.2) {\textbf{Aislamiento Físico}:\\Evita que el \texttt{store}\\invalide \texttt{ptrs}};
+\node[font=\scriptsize, text=alertred!80!black, align=center] at (0.1, -1.2) {\textbf{Physical Isolation}:\\Prevents \texttt{store}\\from invalidating \texttt{ptrs}};
 
 \end{tikzpicture}
-\caption{Arquitectura de memoria y sincronización inter-hilo para HFT. La directiva \texttt{alignas(64)} aísla el índice atómico en una línea de caché exclusiva. Esto previene que las actualizaciones del \textit{Cold Thread} invaliden el caché L1 de los punteros a función (\textit{false sharing}). La semántica \textit{release/acquire} garantiza visibilidad de memoria sin utilizar costosos bloqueos.}
+\caption{Memory architecture and inter-thread synchronization for HFT. The \texttt{alignas(64)} directive isolates the atomic index in an exclusive cache line. This prevents updates from the \textit{Cold Thread} from invalidating the L1 cache of active function pointers (\textit{false sharing}). The \textit{release/acquire} memory ordering semantics guarantee memory visibility without using expensive locks.}
 \label{fig:arquitectura}
 \end{figure}
 
-\subsection{Entorno de Ejecución}
-Las pruebas se ejecutaron en un entorno Linux (Ubuntu 24.04 LTS), procesador Intel con 12 núcleos lógicos, compilador GCC~13.3 (\texttt{-O2}, C++17). La instrumentación temporal se realizó mediante \texttt{std::chrono::high\_resolution\_clock}. Las condiciones aleatorias se pre-generaron antes de cada \textit{trial} para asegurar que el costo del generador de números aleatorios (RNG) no contaminara las mediciones de latencia del \textit{hot path}.
+\subsection{Execution Environment}
+Tests were executed on a Linux environment (Ubuntu 24.04 LTS), powered by an Intel processor with 12 logical cores, compiled with GCC~13.3 (\texttt{-O2}, C++17). Temporal instrumentation was performed via \texttt{std::chrono::high\_resolution\_clock}. The random conditions were pre-generated before each trial to ensure that the overhead of the pseudorandom number generator (RNG) did not pollute the hot-path latency measurements.

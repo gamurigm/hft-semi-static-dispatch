@@ -62,6 +62,14 @@ namespace semistatic {
 //  ~3.17 ns/op vs ~8.91 ns/op del switch equivalente (2.81x speedup)
 //  Solo acepta funciones libres o static. Sin heap. Sin std::function.
 // ============================================================================
+// EXPLICACIÓN DE MICROARQUITECTURA:
+// El patrón Semi-Static elimina el uso de estructuras de control condicionales
+// (if/else, switch) en el Hot Path. En su lugar, utiliza un arreglo de punteros
+// a función (`ptrs_`) y un índice (`current_`).
+// El CPU ejecuta un salto indirecto basado en el índice. Como el índice solo cambia
+// en el Cold Path, el Branch Target Buffer (BTB) del CPU recuerda la dirección
+// de salto anterior con casi un 100% de precisión, logrando ejecución determinista.
+// ============================================================================
 
 template <int MaxN, typename Ret, typename... Args>
 class FastBranch {
@@ -122,6 +130,9 @@ public:
     void select(int i) noexcept         { set(i); }
 
     // ---- HOT PATH ----
+    // EXPLICACIÓN TÉCNICA: Esta operación se traduce a un 'jmp' indirecto puro
+    // en ensamblador. Al no existir una instrucción de salto condicional (je/jne),
+    // el CPU no sufre de penalizaciones por Pipeline Flush por fallo de predicción.
 
     Ret branch(Args... args) const {
         return ptrs_[current_](std::forward<Args>(args)...);
@@ -212,6 +223,10 @@ public:
 private:
     FuncPtr             ptrs_[MaxN] = {};
     int                 count_ = 0;
+    // EXPLICACIÓN TÉCNICA: alignas(64) asegura que esta variable ocupe su propia
+    // línea de caché. Esto evita el 'False Sharing' (protocolo MESI). Cuando el
+    // Cold Path modifica este índice, no invalida la línea de caché de los punteros
+    // del Hot Path.
     alignas(64) mutable std::atomic<int> current_{0};
 };
 

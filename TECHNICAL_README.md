@@ -63,6 +63,24 @@ router.add([factor](int x) { std::cout << x * factor; });
 
 ---
 
+## 🔬 Mecanismos Microarquitectónicos (¿Por qué es tan rápido?)
+
+El rendimiento extremo de esta biblioteca no es casualidad; se basa en cómo interactúa el código C++ con el hardware del CPU:
+
+### 1. Eliminación de Fallos de Predicción de Saltos (Branch Mispredictions)
+En un `if/else` o `switch` tradicional, el CPU utiliza el **Branch Predictor** para adivinar qué camino se tomará y ejecutar las instrucciones de forma especulativa. Si adivina mal (lo cual ocurre frecuentemente con datos aleatorios de mercado), el CPU debe vaciar su pipeline de ejecución (*Pipeline Flush*), perdiendo entre 15 y 20 ciclos de reloj.
+* **Nuestra Solución:** `FastBranch` traduce el despacho a un **salto indirecto puro** en ensamblador (`jmp *(%rax,%rdx,8)`). Como el índice de la rama solo cambia en el Cold Path, el **Branch Target Buffer (BTB)** del CPU recuerda el destino anterior con casi un 100% de precisión, eliminando los fallos de predicción.
+
+### 2. Aislamiento de Líneas de Caché (False Sharing)
+En procesadores modernos, la memoria se lee en bloques de 64 bytes llamados líneas de caché. Si dos hilos modifican variables diferentes que caen en la misma línea de caché, el protocolo de coherencia (MESI) obligará a invalidar la línea completa en el otro core, causando un retraso masivo.
+* **Nuestra Solución:** En `AtomicFastBranch`, el índice `current_` está marcado con `alignas(64)`. Esto garantiza que ocupe su propia línea de caché exclusiva. Cuando el Cold Path actualiza la estrategia, no invalida la línea de caché donde residen los punteros de función que el Hot Path está leyendo continuamente.
+
+### 3. Modelos de Consistencia de Memoria Ligeros (Acquire/Release)
+Por defecto, las operaciones atómicas en C++ utilizan `std::memory_order_seq_cst` (Consistencia Secuencial), lo cual es sumamente costoso porque inserta barreras de memoria completas (*fences*) que limpian los buffers de escritura del CPU.
+* **Nuestra Solución:** En `AtomicFastBranch` utilizamos un modelo más ligero y ultra-rápido de Acquire/Release. El Cold Path escribe el índice con `memory_order_release` y el Hot Path lo lee con `memory_order_acquire`. Esto garantiza que los hilos vean los datos correctos en el orden correcto sin pagar el precio de rendimiento de una barrera de memoria completa de hardware.
+
+---
+
 ## 📊 Pruebas y Benchmarks
 
 La biblioteca incluye una suite completa de pruebas en la carpeta `tests/` y múltiples escenarios avanzados en `examples/`:

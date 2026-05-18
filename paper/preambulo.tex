@@ -91,3 +91,15 @@
 
 % --- Hyperref ---
 \usepackage[colorlinks=true, linkcolor=techblue, citecolor=techblue, urlcolor=techblue]{hyperref}
+
+% --- Espaciado y Ahorro de Espacio para Límite Estricto de 3 Páginas ---
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{3pt plus 1pt minus 1pt}
+\setlength{\belowcaptionskip}{2pt plus 1pt minus 1pt}
+
+% Ajuste sutil de listas para evitar saltos huérfanos
+\usepackage{enumitem}
+\setlist[enumerate]{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=2pt}
+\setlist[itemize]{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=2pt}

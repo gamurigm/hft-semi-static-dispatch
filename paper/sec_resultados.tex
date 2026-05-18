@@ -12,10 +12,10 @@ El Cuadro~\ref{tab:montecarlo} resume las estadísticas descriptivas obtenidas s
 \begin{tabular}{@{}lcccc@{}}
 \toprule
 \textbf{Estrategia} & \textbf{$\bar{x}$ (ns/op)} & \textbf{Tiempo (ms)} & \textbf{Speedup} & \textbf{vs. switch} \\ \midrule
-\texttt{switch} 4 casos     & $10.00$ & $50.0$ & $1.00\times$ & línea base \\
-\texttt{FlexBranch}         & $\phantom{0}6.56$ & $32.8$ & $1.53\times$ & $-34.4\%$ \\
-\textbf{\texttt{FastBranch}} & $\phantom{0}\mathbf{2.56}$ & $\mathbf{12.8}$ & $\mathbf{1.59\times}$ & $\mathbf{-74.4\%}$ \\
-Control directo              & $\phantom{0}2.16$ & $10.8$ & $1.85\times$ & $-78.4\%$ \\ \bottomrule
+\texttt{switch} 4 casos     & $15.93$ & $79.7$ & $1.00\times$ & línea base \\
+\texttt{FlexBranch}         & $10.76$ & $53.8$ & $1.48\times$ & $-32.5\%$ \\
+\textbf{\texttt{FastBranch}} & $\mathbf{10.02}$ & $\mathbf{50.1}$ & $\mathbf{1.59\times}$ & $\mathbf{-37.1\%}$ \\
+Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.4\%$ \\ \bottomrule
 \end{tabular}
 \end{table}
 
@@ -33,7 +33,7 @@ Control directo              & $\phantom{0}2.16$ & $10.8$ & $1.85\times$ & $-78.
     xlabel={\textbf{Latencia media (ns/op)}},
     ytick={1,2,3,4},
     yticklabels={{Control (ideal)}, {FastBranch}, {FlexBranch}, {switch}},
-    xmin=0, xmax=13,
+    xmin=0, xmax=19, % Safe margin for labels past the error bars
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     xmajorgrids=true,
@@ -44,7 +44,7 @@ Control directo              & $\phantom{0}2.16$ & $10.8$ & $1.85\times$ & $-78.
     nodes near coords style={
         font=\small\bfseries, 
         anchor=west, 
-        xshift=18pt, % Pushes the label safely past the error bars
+        xshift=22pt, % Safe shift to avoid overlapping with the error bars
         text=black!80
     },
     tick label style={font=\small\bfseries},
@@ -55,15 +55,15 @@ Control directo              & $\phantom{0}2.16$ & $10.8$ & $1.85\times$ & $-78.
     error bars/error mark options={rotate=90, mark size=4pt, thick, black!60},
 ]
 \addplot[fill=alertred!55, draw=alertred!70, thick]
-    coordinates {(10.00, 4) +- (0.65, 0)};
+    coordinates {(15.93, 4) +- (0.80, 0)};
 \addplot[fill=coldblue!55, draw=coldblue!70, thick]
-    coordinates {(6.56, 3) +- (0.50, 0)};
+    coordinates {(10.76, 3) +- (0.50, 0)};
 \addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
-    coordinates {(2.56, 2) +- (0.25, 0)};
+    coordinates {(10.02, 2) +- (0.40, 0)};
 \addplot[fill=gray!30, draw=gray!50, thick]
-    coordinates {(2.16, 1) +- (0.21, 0)};
+    coordinates {(9.50, 1) +- (0.30, 0)};
 
-\draw[dashed, thick, neoncyan!80] (axis cs:2.16,0.5) -- (axis cs:2.16,4.5)
+\draw[dashed, thick, neoncyan!80] (axis cs:9.50,0.5) -- (axis cs:9.50,4.5)
     node[pos=0.95, right, font=\tiny\itshape, text=neoncyan!80] {Límite teórico};
 
 \end{axis}
@@ -86,7 +86,7 @@ Control directo              & $\phantom{0}2.16$ & $10.8$ & $1.85\times$ & $-78.
     ylabel={\textbf{Speedup ($\times$)}},
     xtick={1,2,3},
     xticklabels={{switch (base)}, {FlexBranch}, {FastBranch}},
-    ymin=0, ymax=2.5, % Increased ymax to avoid overlapping with text labels
+    ymin=0, ymax=2.1, % Adjusted to leave breathing room for labels
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     ymajorgrids=true,
@@ -103,14 +103,14 @@ Control directo              & $\phantom{0}2.16$ & $10.8$ & $1.85\times$ & $-78.
 \addplot[fill=alertred!55, draw=alertred!70, thick]
     coordinates {(1, 1.00) +- (0, 0)};
 \addplot[fill=coldblue!55, draw=coldblue!70, thick]
-    coordinates {(2, 1.53) +- (0, 0.10)};
+    coordinates {(2, 1.48) +- (0, 0.05)};
 \addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
-    coordinates {(3, 1.59) +- (0, 0.10)};
+    coordinates {(3, 1.59) +- (0, 0.08)};
 
-\draw[dashed, thick, neoncyan!80] (axis cs:0.5,1.85) -- (axis cs:3.5,1.85)
-    node[pos=0.05, above, font=\scriptsize\itshape, text=neoncyan!80] {Límite Ideal: $1.85\times$};
+\draw[dashed, thick, neoncyan!80] (axis cs:0.5,1.68) -- (axis cs:3.5,1.68)
+    node[pos=0.05, above, font=\scriptsize\itshape, text=neoncyan!80] {Límite Ideal: $1.68\times$};
 
-\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,2.05) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
+\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,1.75) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
 
 \end{axis}
 \end{tikzpicture}

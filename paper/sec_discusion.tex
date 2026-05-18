@@ -1,0 +1,9 @@
+% sec_discusion.tex
+% Section 4: Discussion
+\section{Discussion}
+
+The obtained results significantly outperform the conservative metrics reported by Bilokon et al. \cite{bilokon2025}. Our empirical speedup of $3.02\times$ (66.9\% latency reduction compared to the random \texttt{switch}) demonstrates that, in modern architectures, the impact of eliminating branch mispredictions is proportionally greater as dispatch functions become highly optimized.
+
+The convergence of \texttt{FastBranch} to the theoretical processor limit (a gap of only 0.67 ns/op, equivalent to approximately 2 clock cycles) confirms the near-total elimination of pipeline penalties. This exceptional performance is attributed to the devirtualization and constant propagation capabilities of GCC 13.3, which manages to handle the indirect dispatch of \texttt{FastBranch} with marginal overhead. Furthermore, the reduction in jitter is highly dominant: the standard deviation in the Monte Carlo trials was reduced from 1.88 ns (\texttt{switch}) to 0.87 ns (\texttt{FastBranch}), providing superior latency determinism, a fundamental factor in avoiding SLA violations during high-frequency order routing.
+
+\textbf{Applicability Guide:} The technique is highly recommended under three conditions: (a)~the condition is highly unpredictable for the CPU's TAGE predictor, (b)~the dispatch functions are short ($<$50 ns) where the branch cost is dominant, and (c)~the update interval (\textit{cold path}) occurs at a frequency lower than $1/10^3$ relative to the \textit{hot path} to amortize the atomic store overhead.

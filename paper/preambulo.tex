@@ -1,0 +1,109 @@
+% ==========================================
+% PREÁMBULO DEL DOCUMENTO
+% Configuración, paquetes y estilos
+% ==========================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{multirow}
+
+% --- Configuración de Tipografía ---
+% Usamos lmodern en su variante Sans-Serif para un aspecto ultra-moderno, limpio y de vanguardia (Fintech/HFT)
+\usepackage{lmodern}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[T1]{fontenc}
+\usepackage{microtype} % Mejora el espaciado y justificación
+
+% --- TikZ y PGFPlots ---
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, calc, backgrounds, shadows, decorations.pathreplacing}
+
+% Paleta de colores profesional (Inspirada en paletas HFT/Fintech)
+\definecolor{techblue}{RGB}{10, 50, 120}
+\definecolor{neoncyan}{RGB}{0, 200, 255}
+\definecolor{alertred}{RGB}{220, 20, 60}
+\definecolor{hotgreen}{RGB}{0, 180, 80}
+\definecolor{coldblue}{RGB}{100, 150, 250}
+
+% Configuración global de PGFPlots para gráficos más modernos
+\pgfplotsset{
+    modern chart/.style={
+        ybar,
+        bar width=22pt,
+        enlarge x limits=0.25,
+        width=\linewidth,
+        height=6.5cm,
+        axis line style={opacity=0}, % Oculta los bordes feos
+        major grid style={dashed, gray!30},
+        ymajorgrids=true,
+        xmajorgrids=false,
+        tickwidth=0pt,
+        nodes near coords,
+        nodes near coords align={vertical},
+        nodes near coords style={font=\bfseries\small},
+        legend style={
+            at={(0.5,-0.2)},
+            anchor=north,
+            legend columns=-1,
+            draw=none, % Sin borde en la leyenda
+            fill=white!80
+        },
+        label style={font=\bfseries},
+        tick label style={font=\small}
+    }
+}
+
+% --- Estilos de Código (Listings) ---
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.96,0.96,0.96}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{techblue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=8pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    frame=leftline,
+    framerule=2.5pt,
+    rulecolor=\color{techblue!50}
+}
+\lstset{style=mystyle}
+
+% --- Hyperref ---
+\usepackage[colorlinks=true, linkcolor=techblue, citecolor=techblue, urlcolor=techblue]{hyperref}
+
+% --- Balanceo de última página ---
+\usepackage{balance}
+
+% --- Espaciado y Ahorro de Espacio para Límite Estricto de 3 Páginas ---
+\setlength{\textfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{6pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{3pt plus 1pt minus 1pt}
+\setlength{\belowcaptionskip}{2pt plus 1pt minus 1pt}
+
+% Ajuste sutil de listas para evitar saltos huérfanos
+\usepackage{enumitem}
+\setlist[enumerate]{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=2pt}
+\setlist[itemize]{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=2pt}

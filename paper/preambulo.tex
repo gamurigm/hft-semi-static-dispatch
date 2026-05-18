@@ -11,8 +11,8 @@
 \usepackage{multirow}
 
 % --- Configuración de Tipografía ---
-% Usamos Times (mathptmx) para un acabado académico riguroso y moderno
-\usepackage{mathptmx}
+% Usamos newtxtext y newtxmath para una tipografía Times moderna, nítida y premium
+\usepackage{newtxtext,newtxmath}
 \usepackage[T1]{fontenc}
 \usepackage{microtype} % Mejora el espaciado y justificación
 
@@ -83,9 +83,9 @@
     showstringspaces=false,
     showtabs=false,                  
     tabsize=2,
-    frame=single,
-    frameround=tttt,
-    rulecolor=\color{gray!30}
+    frame=leftline,
+    framerule=2.5pt,
+    rulecolor=\color{techblue!50}
 }
 \lstset{style=mystyle}
 

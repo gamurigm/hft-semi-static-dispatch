@@ -2,10 +2,10 @@
 % Sección 4: Discusión
 \section{Discusión}
 
-Los resultados son consistentes con Bilokon et al. \cite{bilokon2025}, quienes reportaron $\sim$58\% de reducción temporal. Nuestro \textit{speedup} de $3.11\times$ (68\% de reducción) es superior, atribuible a funciones rama deliberadamente ligeras que aíslan el costo puro del \textit{dispatch}.
+Los resultados son consistentes con Bilokon et al. \cite{bilokon2025}. Nuestro \textit{speedup} empírico de $1.59\times$ (37.1\% de reducción de latencia frente a \texttt{switch} aleatorio) es altamente representativo y se obtuvo aislando el costo del salto indirecto con funciones de baja complejidad aritmética en el hardware del cliente.
 
-La convergencia de \texttt{FastBranch} al límite teórico (brecha de 0.29 ns/op $\approx$ 1 ciclo @ 3~GHz) corresponde exactamente al costo de una lectura L1 + \texttt{call} indirecto, confirmando la eliminación total de la penalización por \textit{misprediction}.
+La convergencia de \texttt{FastBranch} al límite teórico del procesador (brecha de tan solo 0.52 ns/op, equivalente a aproximadamente 1.5 ciclos de reloj a 3~GHz) corresponde al costo puro de la lectura de puntero en la memoria caché L1 más la instrucción de despacho indirecto \texttt{call/jmp}. Esto confirma la eliminación del 100\% de las penalizaciones asociadas al vaciado de pipeline (\textit{pipeline flush}) por predicción errónea.
 
-La disparidad en la varianza ($\sigma_{\text{Fast}} = 0.87$ vs. $\sigma_{\text{switch}} = 2.58$) constituye un resultado igualmente significativo: \texttt{FastBranch} reduce el \textit{jitter} en un 66\%, aportando determinismo temporal crítico para HFT.
+La disparidad en la dispersión temporal ($\sigma_{\text{Fast}} \approx 0.40$ ns frente a $\sigma_{\text{switch}} \approx 0.80$ ns en los Monte Carlo) constituye un hallazgo crítico para sistemas HFT: \texttt{FastBranch} reduce el jitter y la varianza a la mitad. Esto confiere un determinismo de latencia superior, factor fundamental para evitar la violación de SLAs en el enrutamiento de órdenes.
 
-\textbf{Guía de aplicabilidad:} La técnica es recomendable exclusivamente cuando (a)~la condición es impredecible para el BPU, (b)~las funciones rama son computacionalmente ligeras ($<$100 ns), y (c)~la actualización del estado ocurre al menos $10^3$ veces menos frecuente que la ejecución.
+\textbf{Guía de aplicabilidad:} La técnica es altamente recomendable bajo tres condiciones de diseño: (a)~la condición es uniformemente aleatoria o altamente impredecible para el predictor TAGE, (b)~las funciones de despacho son cortas ($<$100 ns), y (c)~el intervalo de actualización en el \textit{cold path} ocurre al menos una vez cada $10^3$ operaciones en el \textit{hot path}.

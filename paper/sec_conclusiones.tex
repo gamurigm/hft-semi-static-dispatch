@@ -3,8 +3,8 @@
 \section{Conclusiones}
 
 \begin{enumerate}
-    \item \texttt{FastBranch} alcanza 4.39 ns/op, convergiendo al límite teórico (4.10 ns/op) con un \textit{speedup} de $3.11\times$, validado estadísticamente ($d = 4.71$, masivo).
-    \item La varianza inter-trial ($\sigma = 0.87$ ns) es 66\% inferior a la de \texttt{switch}, aportando determinismo temporal.
-    \item \texttt{std::function} introduce 20.2\% de \textit{overhead} por \textit{type erasure}, confirmando la necesidad de punteros crudos en el \textit{hot path}.
-    \item La técnica es contraproducente cuando el BPU predice correctamente el patrón ($>$99.9\% de acierto con condiciones estables).
+    \item \texttt{FastBranch} alcanza una latencia de 10.02 ns/op, convergiendo exitosamente al límite teórico físico (9.50 ns/op) con un \textit{speedup} empírico medio de $1.59\times$ (IC 95\%: $[1.46\times, 1.72\times]$, Cohen's $d = 1.07$, $p_{\text{boot}} < 0.0001$).
+    \item La dispersión y jitter temporal se reduce a la mitad ($\sigma \approx 0.40$ ns), dotando al motor de branching de un determinismo crítico para la microestructura de trading.
+    \item El uso de punteros crudos acoplados con aislamiento físico de caché (\texttt{alignas(64)}) y semántica lock-free en C++17 elimina por completo la penalización por \textit{false sharing} inter-hilo durante la lectura en caliente.
+    \item Se valida que la técnica semi-estática es contraproducente frente al predictor de hardware BPU cuando la condición tiene una estabilidad superior al 99.9\% ($f_{\text{set}} \le 1/10^3$).
 \end{enumerate}

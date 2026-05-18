@@ -26,7 +26,7 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \begin{axis}[
     xbar,
     bar shift=0pt,
-    width=0.88\linewidth, % Narrower width to prevent spilling into the adjacent column
+    width=0.85\linewidth, % Narrower width for robust column alignment
     height=5.2cm,
     bar width=15pt,
     ymin=0.5, ymax=4.5,
@@ -44,7 +44,7 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
     nodes near coords style={
         font=\small\bfseries, 
         anchor=west, 
-        xshift=22pt, % Safe shift to avoid overlapping with the error bars
+        xshift=22pt, % Pushes the label safely past the error bars
         text=black!80
     },
     tick label style={font=\small\bfseries},
@@ -63,8 +63,8 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \addplot[fill=gray!30, draw=gray!50, thick]
     coordinates {(9.50, 1) +- (0.30, 0)};
 
-\draw[dashed, thick, neoncyan!80] (axis cs:9.50,0.5) -- (axis cs:9.50,4.5)
-    node[pos=0.95, right, font=\tiny\itshape, text=neoncyan!80] {Límite teórico};
+\draw[dashed, thick, techblue!60] (axis cs:9.50,0.5) -- (axis cs:9.50,4.5)
+    node[pos=0.95, right, font=\scriptsize\itshape, text=techblue] {Límite teórico};
 
 \end{axis}
 \end{tikzpicture}
@@ -79,14 +79,14 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \begin{axis}[
     ybar,
     bar shift=0pt,
-    width=0.88\linewidth, % Narrower width to prevent spilling into the adjacent column
+    width=0.85\linewidth, % Narrower width for robust column alignment
     height=6.0cm,
     bar width=30pt,
     xmin=0.5, xmax=3.5,
     ylabel={\textbf{Speedup ($\times$)}},
     xtick={1,2,3},
     xticklabels={{switch (base)}, {FlexBranch}, {FastBranch}},
-    ymin=0, ymax=2.1, % Adjusted to leave breathing room for labels
+    ymin=0, ymax=2.3, % Increased to prevent overlap with the confidence interval text
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     ymajorgrids=true,
@@ -107,10 +107,10 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \addplot[fill=hotgreen!55, draw=hotgreen!70, thick]
     coordinates {(3, 1.59) +- (0, 0.08)};
 
-\draw[dashed, thick, neoncyan!80] (axis cs:0.5,1.68) -- (axis cs:3.5,1.68)
-    node[pos=0.05, above, font=\scriptsize\itshape, text=neoncyan!80] {Límite Ideal: $1.68\times$};
+\draw[dashed, thick, techblue!60] (axis cs:0.5,1.68) -- (axis cs:3.5,1.68)
+    node[pos=0.05, above, font=\scriptsize\itshape, text=techblue] {Límite Ideal: $1.68\times$};
 
-\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,1.75) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
+\node[anchor=south, font=\footnotesize\bfseries, text=techblue] at (axis cs:3,1.95) {IC$_{95\%}$: [1.46$\times$, 1.72$\times$]};
 
 \end{axis}
 \end{tikzpicture}

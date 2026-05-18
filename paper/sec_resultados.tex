@@ -26,14 +26,14 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \begin{axis}[
     xbar,
     bar shift=0pt,
-    width=0.82\linewidth, % Narrower width for robust column alignment
-    height=4.4cm,        % Compact height to fit perfectly in 3 pages
-    bar width=12pt,
+    width=0.82\linewidth,
+    height=4.0cm,        % Further compacted to ensure Conclusions and References fit on Page 3
+    bar width=11pt,
     ymin=0.5, ymax=4.5,
     xlabel={\textbf{Latencia media (ns/op)}},
     ytick={1,2,3,4},
     yticklabels={{Control (ideal)}, {FastBranch}, {FlexBranch}, {switch}},
-    xmin=0, xmax=19, % Safe margin for labels past the error bars
+    xmin=0, xmax=19,
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     xmajorgrids=true,
@@ -44,7 +44,7 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
     nodes near coords style={
         font=\small\bfseries, 
         anchor=west, 
-        xshift=22pt, % Pushes the label safely past the error bars
+        xshift=22pt,
         text=black!80
     },
     tick label style={font=\small\bfseries},
@@ -79,14 +79,14 @@ Control directo              & $\phantom{0}9.50$ & $47.5$ & $1.68\times$ & $-40.
 \begin{axis}[
     ybar,
     bar shift=0pt,
-    width=0.82\linewidth, % Narrower width for robust column alignment
-    height=4.8cm,        % Compact height to fit perfectly in 3 pages
+    width=0.82\linewidth,
+    height=4.4cm,        % Further compacted to ensure Conclusions and References fit on Page 3
     bar width=24pt,
     xmin=0.5, xmax=3.5,
     ylabel={\textbf{Speedup ($\times$)}},
     xtick={1,2,3},
     xticklabels={{switch (base)}, {FlexBranch}, {FastBranch}},
-    ymin=0, ymax=2.3, % Increased to prevent overlap with the confidence interval text
+    ymin=0, ymax=2.3,
     axis line style={gray!50},
     major grid style={dashed, gray!20},
     ymajorgrids=true,

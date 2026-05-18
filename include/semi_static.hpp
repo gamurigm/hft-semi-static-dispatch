@@ -82,6 +82,8 @@ public:
     {
         static_assert(sizeof...(Funcs) >= 1,    "Requiere al menos 1 rama.");
         static_assert(sizeof...(Funcs) <= MaxN, "Excede MaxN ramas.");
+        static_assert((std::is_same_v<std::decay_t<Funcs>, FuncPtr> && ...), 
+                      "Todas las funciones deben coincidir exactamente con la firma esperada.");
     }
 
     /// Default: sin ramas, requiere add() antes de usar.
@@ -170,6 +172,8 @@ public:
     {
         static_assert(sizeof...(Funcs) >= 1,    "Requiere al menos 1 rama.");
         static_assert(sizeof...(Funcs) <= MaxN, "Excede MaxN ramas.");
+        static_assert((std::is_same_v<std::decay_t<Funcs>, FuncPtr> && ...), 
+                      "Todas las funciones deben coincidir exactamente con la firma esperada.");
         current_.store(0, std::memory_order_relaxed);
     }
 
@@ -209,6 +213,47 @@ private:
     FuncPtr             ptrs_[MaxN] = {};
     int                 count_ = 0;
     alignas(64) mutable std::atomic<int> current_{0};
+};
+
+
+// ============================================================================
+//  SECCION 2.5: MemberFastBranch — Soporte para Metodos de Clase (sin heap)
+// ============================================================================
+
+template <int MaxN, typename T, typename Ret, typename... Args>
+class MemberFastBranch {
+public:
+    using MemberFuncPtr = Ret (T::*)(Args...);
+
+    static_assert(MaxN >= 1, "MemberFastBranch requiere MaxN >= 1.");
+
+    template <typename... Funcs>
+    constexpr explicit MemberFastBranch(Funcs... fns) noexcept
+        : ptrs_{fns...}
+        , count_(sizeof...(Funcs))
+        , current_(0)
+    {
+        static_assert(sizeof...(Funcs) >= 1,    "Requiere al menos 1 rama.");
+        static_assert(sizeof...(Funcs) <= MaxN, "Excede MaxN ramas.");
+        static_assert((std::is_same_v<Funcs, MemberFuncPtr> && ...), 
+                      "Todos los metodos deben coincidir exactamente con la firma esperada.");
+    }
+
+    void set(int idx) noexcept {
+        assert(idx >= 0 && idx < count_);
+        current_ = idx;
+    }
+
+    Ret operator()(T* instance, Args... args) const {
+        return (instance->*ptrs_[current_])(std::forward<Args>(args)...);
+    }
+
+    [[nodiscard]] constexpr int size() const noexcept { return count_; }
+
+private:
+    MemberFuncPtr ptrs_[MaxN] = {};
+    int           count_   = 0;
+    int           current_ = 0;
 };
 
 
